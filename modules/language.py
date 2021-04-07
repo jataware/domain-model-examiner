@@ -21,7 +21,7 @@ def contains(filename, marker):
 
 class Language:
     """
-        Language Identification class called form main.py.
+        Language Identification class called from main.py.
     """
     
     def __init__(self, repo):
