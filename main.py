@@ -36,7 +36,6 @@
         3. confirm lanugage and main file based on known language execution methods
         
 
-    from pydriller.utils.conf import Conf
 """
 
 import os
@@ -50,7 +49,10 @@ def main():
     for repo in params['repositories']:  
         print(os.path.basename(repo['path']))
         lang = Language(repo['path'])    
-        lang.report_language()
+        lang.report_metrics()
+        
+        print()
+        # TODO: output yml for each repo
 
 
 if __name__ == "__main__":
