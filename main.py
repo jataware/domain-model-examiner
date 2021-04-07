@@ -39,15 +39,22 @@
     from pydriller.utils.conf import Conf
 """
 
+import os
+import json
 from modules.language import Language
 
-lang = Language()
+def main():
+    params = open('parameters.json').read()
+    params = json.loads(params)
+    
+    for repo in params['repositories']:  
+        print(os.path.basename(repo['path']))
+        lang = Language(repo['path'])    
+        lang.report_language()
 
-lang.stub()
 
-
-
-
+if __name__ == "__main__":
+    main()
 
 
 
