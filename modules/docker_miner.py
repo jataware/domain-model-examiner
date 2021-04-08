@@ -4,7 +4,9 @@ Find any useful goodies in DockerFile
 """
 
 def report_dockerfile(filename):
-    # Report DockerFile if it contains ENTRYPOINT in uppercase.
+    """
+    Report DockerFile if it contains ENTRYPOINT in uppercase.
+    """
     with open(filename) as f:
         for line in f:
             if 'ENTRYPOINT' in line:

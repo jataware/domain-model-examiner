@@ -5,6 +5,7 @@ Utitliies
 """
 
 import os
+import re
 
 def commonprefix(args, sep="\\"):
     """
@@ -13,6 +14,20 @@ def commonprefix(args, sep="\\"):
     """
     return os.path.commonprefix(args).rpartition(sep)[0]
 
+
+def get_urls(filename):
+    """
+    Return set of urls.
+    """
+    urls = set()
+    with open(filename) as f:
+        for line in f:
+            if ('http' in line):
+                # get url between delimiters
+                regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+                url = re.findall(regex,line)                      
+                urls.add([x[0] for x in url][0])
+    return urls
 
 def textfile_contains(filename, marker):
     """
@@ -23,3 +38,4 @@ def textfile_contains(filename, marker):
         if marker in text:
             return True        
     return False
+
