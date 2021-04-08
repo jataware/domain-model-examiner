@@ -6,6 +6,7 @@ Miner for Python repos.
 
 import os
 import modules.utilities as util
+import modules.docker_miner as dminer
 
 class PyRepoMiner:
     """
@@ -15,15 +16,7 @@ class PyRepoMiner:
         self.repo_path = repo
         self.mine_files()
         
-    def report_dockerfile(self, full_filename):
-        # Report DockerFile if it contains ENTRYPOINT in uppercase.
-        with open(full_filename) as f:
-            for line in f:
-                if 'ENTRYPOINT' in line:
-                    print('\tDockerfile found with ENTRYPOINT:', full_filename)
-                    print('\t\t', line)
-                    return
-        
+
     def mine_files(self):
         ## Probably move to another unit/class.
         ## Try to id the entry point file based on the identified language.
@@ -43,7 +36,7 @@ class PyRepoMiner:
  
                 
                 if file == 'Dockerfile':
-                    self.report_dockerfile(full_filename)
+                    dminer.report_dockerfile(full_filename)
         
         
         print('\t', len(mainfiles), '.py files with __main__ found:')

@@ -52,7 +52,7 @@ def main():
     
     for repo in params['repositories']:  
         print(os.path.basename(repo['path']))
-        lang = language.report_language (repo['path'])    
+        lang = language.detect_language (repo['path'])    
         
         if (lang == '.py'):
             pyminer.PyRepoMiner(repo['path'])

@@ -8,10 +8,11 @@ You'd think it is R, but it would be the C.
 
 import os
 import modules.utilities as util
+import modules.docker_miner as dminer
 
 class RRepoMiner:
     """
-    Python-specific repo miner.
+    R-specific repo miner.
     """
     def __init__(self, repo):
         self.repo_path = repo
@@ -34,7 +35,7 @@ class RRepoMiner:
                     # wget, request, https specific to R
                 
                 if file == 'Dockerfile':
-                    self.report_dockerfile(full_filename)
+                    dminer.report_dockerfile(full_filename)
         
         
         print('\t', len(mainfiles), '.R files with commandArgs found:')
@@ -45,11 +46,4 @@ class RRepoMiner:
             print('\t\t' + f.replace(cp,''))
             
             
-    def report_dockerfile(self, full_filename):
-        # Report DockerFile if it contains ENTRYPOINT in uppercase.
-        with open(full_filename) as f:
-            for line in f:
-                if 'ENTRYPOINT' in line:
-                    print('\tDockerfile found with ENTRYPOINT:', full_filename)
-                    print('\t\t', line)
-                    return
+   

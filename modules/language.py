@@ -9,7 +9,7 @@ import os
 
 languages = {'.py': 'Python', '.R': 'R', '.java': 'Java'}
               
-def report_language(repo_path):           
+def detect_language(repo_path):           
     ### Iterate repo to get counts by file extension.
     counts = {}            
     for root, dirs, files in os.walk(repo_path):
