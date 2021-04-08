@@ -40,7 +40,11 @@
 
 import os
 import json
-from modules.language import Language
+import modules.language as language
+import modules.python_miner as pyminer
+import modules.r_miner as rminer
+
+
 
 def main():
     params = open('parameters.json').read()
@@ -48,8 +52,12 @@ def main():
     
     for repo in params['repositories']:  
         print(os.path.basename(repo['path']))
-        lang = Language(repo['path'])    
-        lang.report_metrics()
+        lang = language.report_language (repo['path'])    
+        
+        if (lang == '.py'):
+            pyminer.PyRepoMiner(repo['path'])
+        elif (lang == '.R'):
+            rminer.RRepoMiner(repo['path'])
         
         print()
         # TODO: output yml for each repo
