@@ -38,8 +38,7 @@
 
 """
 
-import os
-import json
+import argparse, json, os
 import modules.language as language
 import modules.python_miner as pyminer
 import modules.r_miner as rminer
@@ -47,17 +46,32 @@ import modules.r_miner as rminer
 
 
 def main():
-    params = open('parameters.json').read()
-    params = json.loads(params)
-    
-    for repo in params['repositories']:  
-        print(os.path.basename(repo['path']))
-        lang = language.detect_language (repo['path'])    
+    parser = argparse.ArgumentParser(
+        description='Domain Model Examiner (DMX) mines codebases to semi-automate installation and execution',
+        epilog='Good luck.'
+        
+        )
+    parser.add_argument('--repo', help="GitHub repo path in double quotes")
+    args = parser.parse_args()
+           
+    repos = []
+    if args.repo != None:
+        repos.append(args.repo)
+    else: 
+        # resort to reading from parameters.json
+        params = open('parameters.json').read()
+        params = json.loads(params)
+        for repo in params['repositories']:
+            repos.append(repo['path'])
+
+    for repo in repos:  
+        print(os.path.basename(repo))
+        lang = language.detect_language (repo)    
         
         if (lang == '.py'):
-            pyminer.PyRepoMiner(repo['path'])
+            pyminer.PyRepoMiner(repo)
         elif (lang == '.R'):
-            rminer.RRepoMiner(repo['path'])
+            rminer.RRepoMiner(repo)
         
         print()
         # TODO: output yml for each repo

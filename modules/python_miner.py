@@ -22,6 +22,8 @@ class PyRepoMiner:
         """
         Return unique set of imports.
         Improvement would be to ignore the repo's units.
+        
+        TODO: parse command-delimited imports
         """
         imports = set()
         with open(filename) as f:
