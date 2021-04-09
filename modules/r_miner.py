@@ -23,13 +23,15 @@ class RRepoMiner:
     def get_libraries(self, filename):
         """
         Return set of libraries.
+        
+        install.packages("tidyr", repos = repo)
         """
         libraries = set()
         with open(filename) as f:
             for line in f:
-                if line.startswith('library'):
+                if line.startswith('library') or line.startswith('install.packages'): 
                     library = line.strip().split('(')[1].split(',')[0].split(')')[0]
-                    libraries.add(library)
+                    libraries.add(library.strip('"'))
     
         return libraries
         

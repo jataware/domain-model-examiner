@@ -8,6 +8,7 @@ import os
 import modules.utilities as util
 import modules.docker_miner as dminer
 
+
 class PyRepoMiner:
     """
     Python-specific repo miner.
