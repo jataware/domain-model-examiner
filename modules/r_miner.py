@@ -6,7 +6,7 @@ You'd think it is R, but it would be the C.
 
 """
 
-import os
+import os, yaml
 import modules.utilities as util
 import modules.docker_miner as dminer
 
@@ -43,6 +43,8 @@ class RRepoMiner:
         ## Probably move to another unit/class.
         ## Try to id the entry point file based on the identified language.
         ## Requires Iterating again, which makes this slow.
+        yaml_dict = [{'language' : 'R'}]
+        docker = None
         libraries = set()
         mainfiles = []
         urls = set()
@@ -64,15 +66,16 @@ class RRepoMiner:
                     urls.update(util.get_urls(full_filename))
                     
                 if file == 'Dockerfile':
-                    dminer.report_dockerfile(full_filename)
+                    docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
         
         
         print('\t', len(mainfiles), '.R files with commandArgs found:')
         
         # Remove common path from filenames and output.
         cp = util.commonprefix(mainfiles)
+        mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
         for f in mainfiles:
-            print('\t\t' + f.replace(cp,''))
+            print('\t\t' + f)
             
             
         # Report libraries.
@@ -90,3 +93,17 @@ class RRepoMiner:
             print('\t\t', i)
         print() 
    
+
+   
+        # Append Yaml dictionary and write to file.   
+        
+        if docker is None:
+            yaml_dict.append(dict(docker_entrypoint=None))
+        else:
+            yaml_dict.append(docker)
+            
+        yaml_dict.append(dict(libraries=libraries))
+        yaml_dict.append(dict(main_files=mainfiles))
+        yaml_dict.append(dict(urls=urls))        
+        with open('dmx-' + os.path.basename(self.repo_path) + '.yaml', 'w') as file:
+            yaml.dump(yaml_dict, file)

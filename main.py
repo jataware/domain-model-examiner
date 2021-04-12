@@ -74,7 +74,7 @@ def main():
             rminer.RRepoMiner(repo)
         
         print()
-        # TODO: output yml for each repo
+        
 
 
 if __name__ == "__main__":

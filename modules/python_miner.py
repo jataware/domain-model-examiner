@@ -4,7 +4,7 @@ Miner for Python repos.
 
 """
 
-import os
+import os, yaml
 import modules.utilities as util
 import modules.docker_miner as dminer
 
@@ -38,8 +38,10 @@ class PyRepoMiner:
         ## Probably move to another unit/class.
         ## Try to id the entry point file based on the identified language.
         ## Requires Iterating again, which makes this slow.
-        mainfiles = []
+        yaml_dict = [{'language' : 'Python'}]
+        docker = None
         imports = set()
+        mainfiles = []        
         urls = set()
         for root, dirs, files in os.walk(self.repo_path):
             for file in files:
@@ -62,31 +64,44 @@ class PyRepoMiner:
                     urls.update(util.get_urls(full_filename))
                 
                 if file == 'Dockerfile':
-                    dminer.report_dockerfile(full_filename)
+                    docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
         
         
         # Report .py files, Remove common path from filenames and output.
         print('\t', len(mainfiles), '.py files with __main__ found:')
         cp = util.commonprefix(mainfiles)
+        mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
         for f in mainfiles:
-            print('\t\t' + f.replace(cp,''))
-            
+            print('\t\t' + f)
+                                    
         # Report imports.
         imports = sorted(imports)
         print('\t', len(imports), 'import(s) found:')        
         print('\t\t', end='')
         for i in imports:
             print(i, end=' ')
-        print()                               
-        
+        print()                 
+                    
         # Report urls.
         urls = sorted(urls)
         print('\t', len(urls), 'url(s) found:')        
         for i in urls:
             print('\t\t', i)
         print() 
-            
-            
+        
+
+        # Append Yaml dictionary and write to file.   
+        
+        if docker is None:
+            yaml_dict.append(dict(docker_entrypoint=None))
+        else:
+            yaml_dict.append(docker)
+        
+        yaml_dict.append(dict(imports=imports))
+        yaml_dict.append(dict(main_files=mainfiles))
+        yaml_dict.append(dict(urls=urls))        
+        with open('dmx-' + os.path.basename(self.repo_path) + '.yaml', 'w') as file:
+            yaml.dump(yaml_dict, file)
             
             
             
