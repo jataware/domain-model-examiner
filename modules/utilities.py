@@ -6,6 +6,7 @@ Utitliies
 
 import os
 import re
+import tldextract 
 
 def commonprefix(args, sep="\\"):
     """
@@ -26,7 +27,13 @@ def get_urls(filename):
                 # get url between delimiters
                 regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
                 url = re.findall(regex,line)                      
-                urls.add([x[0] for x in url][0])
+                url = [x[0] for x in url][0]
+                
+                # Report urls as key-value pair where 2nd level domain is key
+                ext = tldextract.extract(url)
+                url = '.'.join(ext[1:3]) + ' (' + url + ')'
+                urls.add(url)
+                    
     return urls
 
 def textfile_contains(filename, marker):
