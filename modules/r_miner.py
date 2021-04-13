@@ -17,6 +17,12 @@ class RRepoMiner:
     """
     def __init__(self, repo):
         self.repo_path = repo
+
+        if os.name == 'nt':
+            self.sep = '\\'
+        else:
+            self.sep = '/'           
+
         self.mine_files()
         
         
@@ -52,7 +58,7 @@ class RRepoMiner:
         for root, dirs, files in os.walk(self.repo_path):
             for file in files:
                 filename, file_ext = os.path.splitext(file) 
-                full_filename = root + '\\' + file
+                full_filename = root + self.sep + file
                 
                 if file_ext == '.R':
                     if util.textfile_contains(full_filename, "commandArgs"):
