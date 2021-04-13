@@ -33,7 +33,7 @@ class RRepoMiner:
         install.packages("tidyr", repos = repo)
         """
         libraries = set()
-        with open(filename) as f:
+        with open(filename, 'r', encoding="utf8") as f:
             for line in f:
                 if line.startswith('library') or line.startswith('install.packages'): 
                     library = line.strip().split('(')[1].split(',')[0].split(')')[0]
@@ -42,9 +42,6 @@ class RRepoMiner:
         return libraries
         
     
- 
-                
-
     def mine_files(self):
         ## Probably move to another unit/class.
         ## Try to id the entry point file based on the identified language.
@@ -63,10 +60,8 @@ class RRepoMiner:
                 if file_ext == '.R':
                     if util.textfile_contains(full_filename, "commandArgs"):
                         mainfiles.append(full_filename)
-                    # check for external data calls, downloads, API calls
-                    # wget, request, https specific to R
                 
-                     # Collate all libraries                    
+                    # Collate all libraries                    
                     libraries.update(self.get_libraries(full_filename))
                     
                     # urls
@@ -75,9 +70,14 @@ class RRepoMiner:
                     # comments
                     comments.append({file: util.get_comments(full_filename) })
                     
-                if file == 'Dockerfile':
+                elif file == 'Dockerfile':
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
-        
+                    
+                elif file.lower().startswith('readme'):
+                    # add urls, then further processing
+                    print(file)
+                    urls.update(util.get_urls(full_filename))
+                    
         
         print('\t', len(mainfiles), '.R files with commandArgs found:')
         
