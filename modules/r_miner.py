@@ -6,7 +6,7 @@ You'd think it is R, but it would be the C.
 
 """
 
-import os, yaml
+import os
 import modules.utilities as util
 import modules.docker_miner as dminer
 
@@ -44,6 +44,7 @@ class RRepoMiner:
         ## Try to id the entry point file based on the identified language.
         ## Requires Iterating again, which makes this slow.
         yaml_dict = [{'language' : 'R'}]
+        comments = []
         docker = None
         libraries = set()
         mainfiles = []
@@ -65,20 +66,23 @@ class RRepoMiner:
                     # urls
                     urls.update(util.get_urls(full_filename))
                     
+                    # comments
+                    comments.append({file: util.get_comments_r(full_filename) })
+                    
                 if file == 'Dockerfile':
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
         
         
         print('\t', len(mainfiles), '.R files with commandArgs found:')
         
-        # Remove common path from filenames and output.
+        ## Remove common path from filenames and output.
         cp = util.commonprefix(mainfiles)
         mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
         for f in mainfiles:
             print('\t\t' + f)
             
             
-        # Report libraries.
+        ## Report libraries.
         libraries = sorted(libraries)
         print('\t', len(libraries), 'libraries found:')        
         print('\t\t', end='')
@@ -86,7 +90,7 @@ class RRepoMiner:
             print(l, end=' ')
         print()    
             
-        # Report urls.
+        ## Report urls.
         urls = sorted(urls)
         print('\t', len(urls), 'url(s) found:')        
         for i in urls:
@@ -95,15 +99,15 @@ class RRepoMiner:
    
 
    
-        # Append Yaml dictionary and write to file.   
-        
+        ## Append Yaml dictionary and write to file.           
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
         else:
             yaml_dict.append(docker)
-            
         yaml_dict.append(dict(libraries=libraries))
         yaml_dict.append(dict(main_files=mainfiles))
-        yaml_dict.append(dict(urls=urls))        
-        with open('dmx-' + os.path.basename(self.repo_path) + '.yaml', 'w') as file:
-            yaml.dump(yaml_dict, file)
+        yaml_dict.append(dict(urls=urls))   
+        yaml_dict.append(dict(comments=comments))
+        
+        ## Write yaml file using utility to control newlines in comments.
+        util.yaml_write_file(os.path.basename(self.repo_path), yaml_dict)

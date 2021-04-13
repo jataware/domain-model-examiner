@@ -4,7 +4,7 @@ Miner for Python repos.
 
 """
 
-import os, yaml
+import os
 import modules.utilities as util
 import modules.docker_miner as dminer
 
@@ -17,7 +17,7 @@ class PyRepoMiner:
         self.repo_path = repo
         self.mine_files()
         
-
+        
     def get_imports(self, filename):
         """
         Return unique set of imports.
@@ -40,6 +40,7 @@ class PyRepoMiner:
         ## Requires Iterating again, which makes this slow.
         yaml_dict = [{'language' : 'Python'}]
         docker = None
+        comments = []
         imports = set()
         mainfiles = []        
         urls = set()
@@ -63,18 +64,21 @@ class PyRepoMiner:
                     # urls
                     urls.update(util.get_urls(full_filename))
                 
+                    # comments
+                    comments.append({file: util.get_comments_python(full_filename) })
+                
                 if file == 'Dockerfile':
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
         
         
-        # Report .py files, Remove common path from filenames and output.
+        ## Report .py files, Remove common path from filenames and output.
         print('\t', len(mainfiles), '.py files with __main__ found:')
         cp = util.commonprefix(mainfiles)
         mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
         for f in mainfiles:
             print('\t\t' + f)
                                     
-        # Report imports.
+        ## Report imports.
         imports = sorted(imports)
         print('\t', len(imports), 'import(s) found:')        
         print('\t\t', end='')
@@ -82,7 +86,7 @@ class PyRepoMiner:
             print(i, end=' ')
         print()                 
                     
-        # Report urls.
+        ## Report urls.
         urls = sorted(urls)
         print('\t', len(urls), 'url(s) found:')        
         for i in urls:
@@ -90,8 +94,7 @@ class PyRepoMiner:
         print() 
         
 
-        # Append Yaml dictionary and write to file.   
-        
+        ## Append Yaml dictionary.   
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
         else:
@@ -100,8 +103,12 @@ class PyRepoMiner:
         yaml_dict.append(dict(imports=imports))
         yaml_dict.append(dict(main_files=mainfiles))
         yaml_dict.append(dict(urls=urls))        
-        with open('dmx-' + os.path.basename(self.repo_path) + '.yaml', 'w') as file:
-            yaml.dump(yaml_dict, file)
+        yaml_dict.append(dict(comments=comments))
+        
+        # Write yaml file using utility to control newlines in comments.
+        util.yaml_write_file(os.path.basename(self.repo_path), yaml_dict)
+        
+
             
             
             
