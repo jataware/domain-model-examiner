@@ -1,6 +1,27 @@
 # domain-model-examiner
 World Modelers Domain Model Examiner (DMX) - repo install / startup automaton
 
+## Usage
+
+First, run:
+
+```
+pip install -r requirements.txt
+```
+
+Then, clone or download the repository of interest. For example:
+
+```
+cd /tmp
+git clone https://github.com/jataware/dummy-model.git
+```
+
+Next, analyze this repo with:
+
+```
+python main.py --repo="/tmp/dummy-model"
+```
+
 # research phase (Trello description)
 
 **Overview**:

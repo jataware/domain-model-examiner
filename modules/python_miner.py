@@ -16,8 +16,14 @@ class PyRepoMiner:
     """
     def __init__(self, repo):
         self.repo_path = repo
+
+        if os.name == 'nt':
+            self.sep = '\\'
+        else:
+            self.sep = '/'        
+            
         self.mine_files()
-        
+       
         
     def get_imports(self, filename):
         """
@@ -48,7 +54,7 @@ class PyRepoMiner:
         for root, dirs, files in os.walk(self.repo_path):
             for file in files:
                 filename, file_ext = os.path.splitext(file) 
-                full_filename = root + '\\' + file
+                full_filename = root + self.sep + file
                 
                 if file_ext == '.py':
                     if util.textfile_contains(full_filename, "__name__ == \"__main__\""):
