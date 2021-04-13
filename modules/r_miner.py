@@ -67,7 +67,7 @@ class RRepoMiner:
                     urls.update(util.get_urls(full_filename))
                     
                     # comments
-                    comments.append({file: util.get_comments_r(full_filename) })
+                    comments.append({file: util.get_comments(full_filename) })
                     
                 if file == 'Dockerfile':
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))

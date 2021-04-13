@@ -44,7 +44,6 @@ import modules.python_miner as pyminer
 import modules.r_miner as rminer
 
 
-
 def main():
     parser = argparse.ArgumentParser(
         description='Domain Model Examiner (DMX) mines codebases to semi-automate installation and execution',

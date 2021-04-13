@@ -18,7 +18,7 @@ def commonprefix(args, sep="\\"):
     return os.path.commonprefix(args).rpartition(sep)[0]
 
 
-def get_comments_python(filename):
+def get_comments(filename):
     
     comments = []
     with open(filename) as fp:
@@ -34,11 +34,6 @@ def get_comments_python(filename):
             
     return comments       
             
-
-def get_comments_r(filename):
-    comments = []
-    return comments
-
 
 def get_urls(filename):
     """
