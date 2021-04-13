@@ -9,7 +9,7 @@ You'd think it is R, but it would be the C.
 import os
 import modules.utilities as util
 import modules.docker_miner as dminer
-
+import modules.repo_miner as repominer
 
 class RRepoMiner:
     """
@@ -99,7 +99,10 @@ class RRepoMiner:
    
 
    
-        ## Append Yaml dictionary and write to file.           
+        ## Append Yaml dictionary and write to file.        
+        owner_info = repominer.report_owner(self.repo_path)
+        yaml_dict.append(dict(owner=owner_info))
+        
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
         else:

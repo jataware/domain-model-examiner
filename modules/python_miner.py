@@ -7,6 +7,7 @@ Miner for Python repos.
 import os
 import modules.utilities as util
 import modules.docker_miner as dminer
+import modules.repo_miner as repominer
 
 
 class PyRepoMiner:
@@ -95,6 +96,9 @@ class PyRepoMiner:
         
 
         ## Append Yaml dictionary.   
+        owner_info = repominer.report_owner(self.repo_path)
+        yaml_dict.append(dict(owner=owner_info))
+        
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
         else:

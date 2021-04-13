@@ -24,12 +24,12 @@ def get_comments(filename):
     with open(filename) as fp:
         filename = os.path.basename(filename)
         for comment, start, end in getcomments.get_comment_blocks(fp):
-            heading = "%s ln%s" % (filename, start[0])
-            print(heading)
-            print('-' * len(heading))
-            print('')
-            print(comment)
-            print('\n')
+            #heading = "%s ln%s" % (filename, start[0])
+            #print(heading)
+            #print('-' * len(heading))
+            #print('')
+            #print(comment)
+            #print('\n')
             comments.append({ "ln%s" % (start[0]) : comment.rstrip()})
             
     return comments       

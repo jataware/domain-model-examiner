@@ -63,8 +63,9 @@ def main():
         for repo in params['repositories']:
             repos.append(repo['path'])
 
-    for repo in repos:  
-        print(os.path.basename(repo))
+    for repo in repos:          
+        print(repo, os.path.basename(repo))
+        
         lang = language.detect_language (repo)    
         
         if (lang == '.py'):
