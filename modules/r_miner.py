@@ -51,7 +51,7 @@ class RRepoMiner:
         docker = None
         libraries = set()
         mainfiles = []
-        urls = set()
+        urls = []
         for root, dirs, files in os.walk(self.repo_path):
             for file in files:
                 filename, file_ext = os.path.splitext(file) 
@@ -65,7 +65,9 @@ class RRepoMiner:
                     libraries.update(self.get_libraries(full_filename))
                     
                     # urls
-                    urls.update(util.get_urls(full_filename))
+                    url_list = util.get_urls(full_filename)
+                    if url_list:
+                        urls.extend(url_list)  
                     
                     # comments
                     comments.append({file: util.get_comments(full_filename) })
@@ -74,10 +76,11 @@ class RRepoMiner:
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
                     
                 elif file.lower().startswith('readme'):
-                    # add urls, then further processing
-                    print(file)
-                    urls.update(util.get_urls(full_filename))
-                    
+                    # add urls, then further processing                    
+                    url_list = util.get_urls(full_filename)
+                    if url_list:
+                        urls.extend(url_list)  
+                                    
         
         print('\t', len(mainfiles), '.R files with commandArgs found:')
         
@@ -86,8 +89,7 @@ class RRepoMiner:
         mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
         for f in mainfiles:
             print('\t\t' + f)
-            
-            
+                    
         ## Report libraries.
         libraries = sorted(libraries)
         print('\t', len(libraries), 'libraries found:')        
@@ -97,26 +99,25 @@ class RRepoMiner:
         print()    
             
         ## Report urls.
-        urls = sorted(urls)
         print('\t', len(urls), 'url(s) found:')        
-        for i in urls:
+        for i in urls:            
             print('\t\t', i)
         print() 
-   
-
    
         ## Append Yaml dictionary and write to file.        
         owner_info = repominer.report_owner(self.repo_path)
         yaml_dict.append(dict(owner=owner_info))
-        
+                
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
         else:
             yaml_dict.append(docker)
+            
         yaml_dict.append(dict(libraries=libraries))
         yaml_dict.append(dict(main_files=mainfiles))
-        yaml_dict.append(dict(urls=urls))   
+        yaml_dict.append(dict(urls=util.group_urls(urls)))   
         yaml_dict.append(dict(comments=comments))
         
         ## Write yaml file using utility to control newlines in comments.
         util.yaml_write_file(os.path.basename(self.repo_path), yaml_dict)
+        

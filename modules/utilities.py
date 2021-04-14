@@ -4,11 +4,14 @@ Utitliies
 
 """
 
+from itertools import groupby
 import modules.getcomments as getcomments
+from operator import itemgetter
 import os
 import re
 import tldextract 
 import yaml
+      
 
 def commonprefix(args, sep="\\"):
     """
@@ -33,27 +36,44 @@ def get_comments(filename):
             comments.append({ "ln%s" % (start[0]) : comment.rstrip()})
             
     return comments       
-            
+           
 
 def get_urls(filename):
     """
     Return set of urls.
     """
-    urls = set()
+    urls = [] 
     with open(filename, 'r', encoding="utf8") as f:
         for line in f:
             if ('http' in line):
-                # get url between delimiters
-                print(line)
-                regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-                url = re.findall(regex,line)                      
-                url = [x[0] for x in url][0]
-                
-                # Report urls as key-value pair where 2nd level domain is key
-                ext = tldextract.extract(url)
-                url = '.'.join(ext[1:3]) + ' (' + url + ')'
-                urls.add(url)                    
+                # get url between delimiters 
+                sa = line.split(']')
+                for s in sa:
+                    # handle markup and other garbage in README.MD files that break the regex
+                    s = re.sub('\?|\!|\;|\]|\[|\*', '', s)
+                    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+                    url = re.findall(regex,s)       
+                    if len(url) > 0:
+                        url = [x[0] for x in url][0]                        
+                        # Report urls as key-value pair where 2nd level domain is key
+                        ext = tldextract.extract(url)
+                        #url = '.'.join(ext[1:3]) + ' ' + url
+                        url = ('.'.join(ext[1:3]), url)
+                        urls.append(url)                    
     return urls
+
+
+def group_urls(urls):
+    """
+    From a list of tuples of (domain.com, urls), return a dictionary of
+    domain.com: (url1, url2, ...)
+    for yaml output
+    """
+    sorter = sorted(urls, key=itemgetter(0))
+    grouper = groupby(sorter, key=itemgetter(0))
+    
+    return {k: list(map(itemgetter(1), v)) for k, v in grouper}
+
 
 def textfile_contains(filename, marker):
     """
@@ -80,6 +100,7 @@ def yaml_write_file(filename, yaml_dict):
     Handler for writing yaml files controlling for multiline comments.
     """
     yaml.SafeDumper.org_represent_str = yaml.SafeDumper.represent_str
+    # not sure if this representer should be added on every call, or just once per session.
     yaml.add_representer(str, yaml_repr_str, Dumper=yaml.SafeDumper)
     with open("dmx-%s.yaml" % (filename), 'w') as file:
         yaml.safe_dump(yaml_dict, file)

@@ -50,7 +50,7 @@ class PyRepoMiner:
         comments = []
         imports = set()
         mainfiles = []        
-        urls = set()
+        urls = []
         for root, dirs, files in os.walk(self.repo_path):
             for file in files:
                 filename, file_ext = os.path.splitext(file) 
@@ -64,7 +64,9 @@ class PyRepoMiner:
                     imports.update(self.get_imports(full_filename))
     
                     # urls
-                    urls.update(util.get_urls(full_filename))
+                    url_list = util.get_urls(full_filename)
+                    if url_list:
+                        urls.extend(url_list) 
                 
                     # comments
                     comments.append({file: util.get_comments(full_filename) })
@@ -74,8 +76,9 @@ class PyRepoMiner:
                     
                 elif file.lower().startswith('readme'):
                     # add urls, then further processing
-                    urls.update(util.get_urls(full_filename))
-        
+                    url_list = util.get_urls(full_filename)
+                    if url_list:
+                        urls.extend(url_list)                
         
         ## Report .py files, Remove common path from filenames and output.
         print('\t', len(mainfiles), '.py files with __main__ found:')
@@ -93,13 +96,12 @@ class PyRepoMiner:
         print()                 
                     
         ## Report urls.
-        urls = sorted(urls)
+        #urls = sorted(urls)
         print('\t', len(urls), 'url(s) found:')        
         for i in urls:
             print('\t\t', i)
         print() 
         
-
         ## Append Yaml dictionary.   
         owner_info = repominer.report_owner(self.repo_path)
         yaml_dict.append(dict(owner=owner_info))
@@ -111,7 +113,7 @@ class PyRepoMiner:
         
         yaml_dict.append(dict(imports=imports))
         yaml_dict.append(dict(main_files=mainfiles))
-        yaml_dict.append(dict(urls=urls))        
+        yaml_dict.append(dict(urls=util.group_urls(urls)))        
         yaml_dict.append(dict(comments=comments))
         
         # Write yaml file using utility to control newlines in comments.

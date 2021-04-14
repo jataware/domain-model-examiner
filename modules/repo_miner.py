@@ -13,13 +13,17 @@ def report_owner(file):
     response = requests.get("https://api.github.com/users/" + repo_owner)
     user = response.json()
     
-    return [{'login' : user['login']},
-            {'repo_url' : r.remotes.origin.url }, 
-            {'type' : user['type']}, 
-            {'name' : user['name']},
-            {'company' : user['company']}, 
-            {'blog' : user['blog']}, 
-            {'location' : user['location']}, 
-            {'bio' : user['bio']} ]
-    
+    if user['login']:
+        return [{'login' : user['login']},
+                {'repo_url' : r.remotes.origin.url }, 
+                {'type' : user['type']}, 
+                {'name' : user['name']},
+                {'company' : user['company']}, 
+                {'blog' : user['blog']}, 
+                {'location' : user['location']}, 
+                {'bio' : user['bio']} ]
+    else:
+        # github sometimes gets uppity about banging on their api.
+        print (response.text)
+        return response.json
     

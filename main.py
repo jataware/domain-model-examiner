@@ -47,8 +47,7 @@ import modules.r_miner as rminer
 def main():
     parser = argparse.ArgumentParser(
         description='Domain Model Examiner (DMX) mines codebases to semi-automate installation and execution',
-        epilog='Good luck.'
-        
+        epilog='Good luck.'        
         )
     parser.add_argument('--repo', help="GitHub repo path in double quotes")
     args = parser.parse_args()
