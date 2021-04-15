@@ -20,6 +20,17 @@ def commonprefix(args, sep="\\"):
     """
     return os.path.commonprefix(args).rpartition(sep)[0]
 
+def replace_cp(in_list, cp):
+    """
+    Remove the common prefix (cp) for keys of filenames in a list of dictionaries.
+    e.g. for readme files.
+    """
+    out_list = []
+    for d in in_list:
+        key, value = list(d.items())[0]
+        out_list.append({ key.replace(cp,''): value  })
+    return out_list
+
 
 def get_comments(filename):
     """

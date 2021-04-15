@@ -83,7 +83,7 @@ class RRepoMiner:
                 elif file.lower().startswith('readme'):
                     # load entire readme until a better desription is generated
                     with open(full_filename, 'rt', encoding='utf8') as readme_file:
-                        readmes.append(readme_file.read())
+                        readmes.append({ full_filename: readme_file.read()})
                     
                     # add urls, then further processing                    
                     url_list = util.get_urls(full_filename)
@@ -116,8 +116,10 @@ class RRepoMiner:
         for i in urls:            
             print('\t\t', i)
         print() 
-          
-    
+        
+        ## Remove common path from readme filenames.
+        readmes = util.replace_cp(readmes, cp)
+
         ## Append Yaml dictionary and write to file.        
         owner_info = repominer.report_owner(self.repo_path)
         yaml_dict.append(dict(owner=owner_info))

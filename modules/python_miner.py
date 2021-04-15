@@ -82,7 +82,7 @@ class PyRepoMiner:
                 elif file.lower().startswith('readme'):
                     # load entire readme until a better desription is generated
                     with open(full_filename, 'rt', encoding='utf8') as readme_file:
-                        readmes.append(readme_file.read())
+                        readmes.append({ full_filename: readme_file.read()})
                         
                     # add urls, then further processing
                     url_list = util.get_urls(full_filename)
@@ -105,7 +105,10 @@ class PyRepoMiner:
         print('\t\t', end='')
         for i in imports:
             print(i, end=' ')
-        print()                 
+        print()           
+        
+        ## Remove common path from readme filenames.
+        readmes = util.replace_cp(readmes, cp)
                     
         ## Report urls.
         #urls = sorted(urls)
