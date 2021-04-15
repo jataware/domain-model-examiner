@@ -46,11 +46,12 @@ class PyRepoMiner:
         ## Try to id the entry point file based on the identified language.
         ## Requires Iterating again, which makes this slow.
         yaml_dict = [{'language' : 'Python'}]
+        data_files = set()
         docker = None
         comments = []
         imports = set()
         mainfiles = []        
-        urls = []
+        urls = set()
         for root, dirs, files in os.walk(self.repo_path):
             for file in files:
                 filename, file_ext = os.path.splitext(file) 
@@ -66,7 +67,10 @@ class PyRepoMiner:
                     # urls
                     url_list = util.get_urls(full_filename)
                     if url_list:
-                        urls.extend(url_list) 
+                        urls.update(url_list) 
+                        
+                    # file_names
+                    data_files.update(util.get_filenames(full_filename))
                 
                     # comments
                     comments.append({file: util.get_comments(full_filename) })
@@ -78,7 +82,10 @@ class PyRepoMiner:
                     # add urls, then further processing
                     url_list = util.get_urls(full_filename)
                     if url_list:
-                        urls.extend(url_list)                
+                        urls.update(url_list)           
+                        
+                    # file_names
+                    data_files.update(util.get_filenames(full_filename))
         
         ## Report .py files, Remove common path from filenames and output.
         print('\t', len(mainfiles), '.py files with __main__ found:')
@@ -113,6 +120,7 @@ class PyRepoMiner:
         
         yaml_dict.append(dict(imports=imports))
         yaml_dict.append(dict(main_files=mainfiles))
+        yaml_dict.append(dict(data_files=sorted(data_files)))
         yaml_dict.append(dict(urls=util.group_urls(urls)))        
         yaml_dict.append(dict(comments=comments))
         

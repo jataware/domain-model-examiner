@@ -38,6 +38,14 @@ def get_comments(filename):
     return comments       
            
 
+def get_filenames(filename):
+    with open(filename, 'rt', encoding='utf8') as file:
+        words = re.split("[\n\\, \-!?;'//]", file.read())
+        #files = filter(str.endswith(('csv', 'zip')), words)
+        files = set(filter(lambda s: s.endswith(('.csv', '.zip', '.pdf', '.txt')), words))        
+        return list(files)
+    
+
 def get_urls(filename):
     """
     Return set of urls.

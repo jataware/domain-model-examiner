@@ -47,11 +47,12 @@ class RRepoMiner:
         ## Try to id the entry point file based on the identified language.
         ## Requires Iterating again, which makes this slow.
         yaml_dict = [{'language' : 'R'}]
-        comments = []
+        comments = []        
+        data_files = set()
         docker = None
         libraries = set()
         mainfiles = []
-        urls = []
+        urls = set()
         for root, dirs, files in os.walk(self.repo_path):
             for file in files:
                 filename, file_ext = os.path.splitext(file) 
@@ -67,10 +68,13 @@ class RRepoMiner:
                     # urls
                     url_list = util.get_urls(full_filename)
                     if url_list:
-                        urls.extend(url_list)  
+                        urls.update(url_list)  
                     
                     # comments
                     comments.append({file: util.get_comments(full_filename) })
+                    
+                    # file_names
+                    data_files.update(util.get_filenames(full_filename))
                     
                 elif file == 'Dockerfile':
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
@@ -79,8 +83,12 @@ class RRepoMiner:
                     # add urls, then further processing                    
                     url_list = util.get_urls(full_filename)
                     if url_list:
-                        urls.extend(url_list)  
-                                    
+                        urls.update(url_list)  
+                    util.get_filenames(full_filename)       
+                    
+                    # file_names
+                    data_files.update(util.get_filenames(full_filename))
+                    
         
         print('\t', len(mainfiles), '.R files with commandArgs found:')
         
@@ -115,6 +123,7 @@ class RRepoMiner:
             
         yaml_dict.append(dict(libraries=libraries))
         yaml_dict.append(dict(main_files=mainfiles))
+        yaml_dict.append(dict(data_files=sorted(data_files)))
         yaml_dict.append(dict(urls=util.group_urls(urls)))   
         yaml_dict.append(dict(comments=comments))
         
