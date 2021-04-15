@@ -50,7 +50,8 @@ class PyRepoMiner:
         docker = None
         comments = []
         imports = set()
-        mainfiles = []        
+        mainfiles = [] 
+        readmes = []
         urls = set()
         for root, dirs, files in os.walk(self.repo_path):
             for file in files:
@@ -79,6 +80,10 @@ class PyRepoMiner:
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
                     
                 elif file.lower().startswith('readme'):
+                    # load entire readme until a better desription is generated
+                    with open(full_filename, 'rt', encoding='utf8') as readme_file:
+                        readmes.append(readme_file.read())
+                        
                     # add urls, then further processing
                     url_list = util.get_urls(full_filename)
                     if url_list:
@@ -121,7 +126,8 @@ class PyRepoMiner:
         yaml_dict.append(dict(imports=imports))
         yaml_dict.append(dict(main_files=mainfiles))
         yaml_dict.append(dict(data_files=sorted(data_files)))
-        yaml_dict.append(dict(urls=util.group_urls(urls)))        
+        yaml_dict.append(dict(urls=util.group_urls(urls)))      
+        yaml_dict.append(dict(readmes=readmes))
         yaml_dict.append(dict(comments=comments))
         
         # Write yaml file using utility to control newlines in comments.
