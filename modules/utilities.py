@@ -22,6 +22,9 @@ def commonprefix(args, sep="\\"):
 
 
 def get_comments(filename):
+    """
+    Get Python and R comments.
+    """
     
     comments = []
     with open(filename, 'r', encoding="utf8") as fp:
@@ -39,6 +42,9 @@ def get_comments(filename):
            
 
 def get_filenames(filename):
+    """
+    Return list of unique file references.
+    """
     with open(filename, 'rt', encoding='utf8') as file:
         words = re.split("[\n\\, \-!?;'//]", file.read())
         #files = filter(str.endswith(('csv', 'zip')), words)
