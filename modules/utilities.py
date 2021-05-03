@@ -20,16 +20,7 @@ def commonprefix(args, sep="\\"):
     """
     return os.path.commonprefix(args).rpartition(sep)[0]
 
-def replace_cp(in_list, cp):
-    """
-    Remove the common prefix (cp) for keys of filenames in a list of dictionaries.
-    e.g. for readme files.
-    """
-    out_list = []
-    for d in in_list:
-        key, value = list(d.items())[0]
-        out_list.append({ key.replace(cp,''): value  })
-    return out_list
+
 
 
 def get_comments(filename):
@@ -59,13 +50,15 @@ def get_filenames(filename):
     with open(filename, 'rt', encoding='utf8') as file:
         words = re.split("[\n\\, \-!?;'//]", file.read())
         #files = filter(str.endswith(('csv', 'zip')), words)
-        files = set(filter(lambda s: s.endswith(('.csv', '.zip', '.pdf', '.txt')), words))        
+        files = set(filter(lambda s: s.endswith(('.csv', '.zip', '.pdf', '.txt', '.tsv', '.cfg', '.ini')), words))        
         return list(files)
     
 
+
 def get_urls(filename):
     """
-    Return set of urls.
+    Return set of tuples: url_domain, complete_url
+    Use group_tuple_pairs() to organize these for output to yaml etc.
     """
     urls = [] 
     with open(filename, 'r', encoding="utf8") as f:
@@ -81,23 +74,48 @@ def get_urls(filename):
                     if len(url) > 0:
                         url = [x[0] for x in url][0]                        
                         # Report urls as key-value pair where 2nd level domain is key
-                        ext = tldextract.extract(url)
-                        #url = '.'.join(ext[1:3]) + ' ' + url
-                        url = ('.'.join(ext[1:3]), url)
+                        ext = tldextract.extract(url)   # parses url                         
+                        url = ('.'.join(ext[1:3]), url) # create 2nd level domain from ext object, add as first element in tuple(to use as key later)                     
                         urls.append(url)                    
     return urls
 
 
-def group_urls(urls):
+def group_tuple_pairs(list_of_tuples):
     """
     From a list of tuples of (domain.com, urls), return a dictionary of
     domain.com: (url1, url2, ...)
     for yaml output
     """
-    sorter = sorted(urls, key=itemgetter(0))
+    sorter = sorted(list_of_tuples, key=itemgetter(0))
     grouper = groupby(sorter, key=itemgetter(0))
     
     return {k: list(map(itemgetter(1), v)) for k, v in grouper}
+
+
+
+def replace_cp_in_dict_list(in_list, cp):
+    """
+    Remove the common prefix (cp) for keys of filenames in a list of dictionaries.
+    e.g. for readme files.
+    """
+    out_list = []
+    for d in in_list:
+        key, value = list(d.items())[0]
+        out_list.append({ key.replace(cp,''): value  })
+    return out_list
+
+
+def replace_cp_in_tuple_set(in_set, cp):
+    """
+    Remove the common prefix (cp) from the first tuple item in a set.
+    e.g. for source filenames paired with output file information.
+    """
+    out_list = []
+    for t in in_set:        
+        new_t = (t[0].replace(cp,''),) + t[1:]
+        out_list.append(new_t)
+        
+    return sorted(out_list)
 
 
 def textfile_contains(filename, marker):
