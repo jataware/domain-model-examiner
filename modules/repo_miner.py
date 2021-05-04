@@ -37,11 +37,30 @@ def delete_repo():
     """
     shutil.rmtree('tmp', onerror=remove_readonly)
 
+
 def remove_readonly(func, path, excinfo):
     os.chmod(path, stat.S_IWRITE)
     func(path)
 
-def report_owner(file):
+
+def extract_about(repo_path, repo_name):
+    r = Repo(repo_path)
+    repo_owner = r.remotes.origin.url.split('.git')[0].split('/')[-2]
+    
+    endpoint = "https://api.github.com/repos/{0}/{1}".format(repo_owner, repo_name)
+    response = requests.get(endpoint)
+    
+    resp = response.json()
+        
+    if resp['description']:
+        return resp['description']
+    else:
+        # github sometimes gets uppity about banging on their api.
+        print ('repo description / about not found', response.text)
+        return response.json
+    
+    
+def extract_owner(file):
     r = Repo(file)
     repo_owner = r.remotes.origin.url.split('.git')[0].split('/')[-2]
     

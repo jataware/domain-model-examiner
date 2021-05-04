@@ -47,19 +47,21 @@ def get_filenames(filename):
         return list(files)
     
 
-def get_readme_about(filename):
-    """
-    Extract the About, here defined as the first, section of Github repo readmes 
-    so that it may be provided as a model description.
-    
-    filename: Readme.MD usually
-    """
-    with open(filename, 'r', encoding="utf8") as f:
-        txt = f.read()
-        about =  re.search('#([^#]*)#', txt)
-        about = about.group(0) if about else None
-        return about
-    
+# =============================================================================
+# def get_readme_about(filename):
+#     """
+#     Extract the About, here defined as the first, section of Github repo readmes 
+#     so that it may be provided as a model description.
+#     
+#     filename: Readme.MD usually
+#     """
+#     with open(filename, 'r', encoding="utf8") as f:
+#         txt = f.read()
+#         about =  re.search('#([^#]*)#', txt)
+#         about = about.group(0) if about else None
+#         return about
+#     
+# =============================================================================
 
 
 def get_urls(filename):

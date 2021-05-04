@@ -123,7 +123,6 @@ class PyRepoMiner:
         ## Try to id the entry point file based on the identified language.
         ## Requires Iterating again, which makes this slow.
         yaml_dict = [{'language' : 'Python'}]
-        abouts = []        
         comments = []
         data_files = set()
         docker = None
@@ -164,10 +163,6 @@ class PyRepoMiner:
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
                     
                 elif file.lower().startswith('readme'):
-                    # Extract about section if exists.
-                    about = util.get_readme_about(full_filename)
-                    if about:
-                        abouts.append({full_filename: about})
                     
                     # load entire readme until a better desription is generated
                     with open(full_filename, 'rt', encoding='utf8') as readme_file:
@@ -213,16 +208,15 @@ class PyRepoMiner:
         
         ## Remove common path from readme filenames.
         readmes = util.replace_cp_in_dict_list(readmes, cp)
-        abouts  = util.replace_cp_in_dict_list(abouts, self.repo_path) 
+    
         
-        ## Append Yaml dictionary.   
-        owner_info = repominer.report_owner(self.repo_path)
+        # Call Git REST API to get owner info and About description.        
+        owner_info = repominer.extract_owner(self.repo_path)
         yaml_dict.append(dict(owner=owner_info))
         
-        if about:
-            yaml_dict.append(dict(about=abouts))
-        else:
-            yaml_dict.append(dict(about=None))
+        about_desc = repominer.extract_about(self.repo_path, self.repo_name)
+        yaml_dict.append(dict(about=about_desc))
+        
         
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
