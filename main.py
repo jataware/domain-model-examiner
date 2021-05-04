@@ -39,6 +39,7 @@
 """
 
 import argparse, json, os
+import modules.arbitrary_miner as arbminer
 import modules.language as language
 import modules.python_miner as pyminer
 import modules.r_miner as rminer
@@ -69,15 +70,18 @@ def main():
     
     if url != None:
         try:
+            
             repo_miner.clone_repo(url)
             repo_name = os.path.splitext(os.path.basename(url))[0]
             
-            lang = language.detect_language ('tmp') 
-                        
+            lang = language.detect_language ('tmp')             
+            
             if (lang == '.py'):
                 pyminer.PyRepoMiner('tmp', repo_name)
             elif (lang == '.R'):
                 rminer.RRepoMiner('tmp', repo_name)
+            else:
+                arbminer.ArbitraryRepoMiner('tmp', repo_name, lang)
             
             print()
             
@@ -93,7 +97,9 @@ def main():
                 pyminer.PyRepoMiner(repo, os.path.basename(repo))
             elif (lang == '.R'):
                 rminer.RRepoMiner(repo, os.path.basename(repo))
-            
+            else:
+                arbminer.ArbitraryRepoMiner(repo, os.path.basename(repo), lang)
+                
             print()
         
 

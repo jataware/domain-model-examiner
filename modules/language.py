@@ -7,7 +7,19 @@
 import os
 
 
-languages = {'.py': 'Python', '.R': 'R', '.java': 'Java'}
+languages = {'.py': 'Python', 
+             '.R': 'R', 
+             '.java': 'Java', 
+             '.c': 'C', 
+             '.cs':'C#',
+             '.cpp': 'C++',
+             '.rb': 'Ruby',
+             '.php': 'PHP',
+             '.pas': 'Pascal',
+             '.pl': 'Perl',
+             '.f': 'Fortran',
+             '.go': 'Go'
+             }
               
 def detect_language(repo_path):           
     ### Iterate repo to get counts by file extension.

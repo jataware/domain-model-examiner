@@ -28,11 +28,14 @@ def get_comments(filename):
     """
     
     comments = []
-    with open(filename, 'r', encoding="utf8") as fp:
-        filename = os.path.basename(filename)
-        for comment, start, end in getcomments.get_comment_blocks(fp):
-            comments.append({ "ln%s" % (start[0]) : comment.rstrip()})
-            
+    try:
+        with open(filename, 'r', encoding='utf8') as fp:
+            filename = os.path.basename(filename)
+            for comment, start, end in getcomments.get_comment_blocks(fp):
+                comments.append({ "ln%s" % (start[0]) : comment.rstrip()})
+    except Exception as e:
+        print(e)
+        
     return comments       
            
 
@@ -40,12 +43,15 @@ def get_filenames(filename):
     """
     Return list of unique file references within a passed file.
     """
-    with open(filename, 'rt', encoding='utf8') as file:
-        words = re.split("[\n\\, \-!?;'//]", file.read())
-        #files = filter(str.endswith(('csv', 'zip')), words)
-        files = set(filter(lambda s: s.endswith(('.csv', '.zip', '.pdf', '.txt', '.tsv', '.cfg', '.ini')), words))        
-        return list(files)
-    
+    try:
+        with open(filename, 'r', encoding='utf8') as file:
+            words = re.split("[\n\\, \-!?;'//]", file.read())
+            #files = filter(str.endswith(('csv', 'zip')), words)
+            files = set(filter(lambda s: s.endswith(('.csv', '.zip', '.pdf', '.txt', '.tsv', '.cfg', '.ini')), words))        
+            return list(files)
+    except Exception as e:
+        print(e)
+        return []
 
 # =============================================================================
 # def get_readme_about(filename):
@@ -70,22 +76,26 @@ def get_urls(filename):
     Use group_tuple_pairs() to organize these for output to yaml etc.
     """
     urls = [] 
-    with open(filename, 'r', encoding="utf8") as f:
-        for line in f:
-            if ('http' in line):
-                # get url between delimiters 
-                sa = line.split(']')
-                for s in sa:
-                    # handle markup and other garbage in README.MD files that break the regex
-                    s = re.sub('\?|\!|\;|\]|\[|\*', '', s)
-                    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-                    url = re.findall(regex,s)       
-                    if len(url) > 0:
-                        url = [x[0] for x in url][0]                        
-                        # Report urls as key-value pair where 2nd level domain is key
-                        ext = tldextract.extract(url)   # parses url                         
-                        url = ('.'.join(ext[1:3]), url) # create 2nd level domain from ext object, add as first element in tuple(to use as key later)                     
-                        urls.append(url)                    
+    try:
+        with open(filename, 'r', encoding='utf8') as f:
+            for line in f:
+                if ('http' in line):
+                    # get url between delimiters 
+                    sa = line.split(']')
+                    for s in sa:
+                        # handle markup and other garbage in README.MD files that break the regex
+                        s = re.sub('\?|\!|\;|\]|\[|\*', '', s)
+                        regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+                        url = re.findall(regex,s)       
+                        if len(url) > 0:
+                            url = [x[0] for x in url][0]                        
+                            # Report urls as key-value pair where 2nd level domain is key
+                            ext = tldextract.extract(url)   # parses url                         
+                            url = ('.'.join(ext[1:3]), url) # create 2nd level domain from ext object, add as first element in tuple(to use as key later)                     
+                            urls.append(url)     
+    except Exception as e:
+        print(filename, e)
+        
     return urls
 
 
@@ -131,10 +141,14 @@ def textfile_contains(filename, marker):
     """
     Return True if a textfile contains a string.
     """
-    with open(filename, 'r', encoding="utf8") as file:
-        text = file.read();
-        if marker in text:
-            return True        
+    try:
+        with open(filename, 'r', encoding='utf8') as file:
+            text = file.read();
+            if marker in text:
+                return True        
+    except Exception as e:
+        print(e)
+        
     return False
 
 

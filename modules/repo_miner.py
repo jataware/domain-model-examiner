@@ -52,12 +52,12 @@ def extract_about(repo_path, repo_name):
     
     resp = response.json()
         
-    if resp['description']:
+    if "description" in resp:
         return resp['description']
     else:
         # github sometimes gets uppity about banging on their api.
         print ('repo description / about not found', response.text)
-        return response.json
+        return 'not found'
     
     
 def extract_owner(file):
@@ -67,7 +67,7 @@ def extract_owner(file):
     response = requests.get("https://api.github.com/users/" + repo_owner)
     user = response.json()
     
-    if user['login']:
+    if "login" in user:
         return [{'login' : user['login']},
                 {'repo_url' : r.remotes.origin.url }, 
                 {'type' : user['type']}, 
