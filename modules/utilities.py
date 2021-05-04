@@ -16,11 +16,10 @@ import yaml
 def commonprefix(args, sep="\\"):
     """
     Return the common prefix string for a list of file paths.
-    Typically used to remove that prefix to shorten the filename for display.
+    Typically used to remove that prefix to shorten the filename for display,
+    i.e. to provide relative file paths.
     """
     return os.path.commonprefix(args).rpartition(sep)[0]
-
-
 
 
 def get_comments(filename):
@@ -32,12 +31,6 @@ def get_comments(filename):
     with open(filename, 'r', encoding="utf8") as fp:
         filename = os.path.basename(filename)
         for comment, start, end in getcomments.get_comment_blocks(fp):
-            #heading = "%s ln%s" % (filename, start[0])
-            #print(heading)
-            #print('-' * len(heading))
-            #print('')
-            #print(comment)
-            #print('\n')
             comments.append({ "ln%s" % (start[0]) : comment.rstrip()})
             
     return comments       
@@ -45,13 +38,27 @@ def get_comments(filename):
 
 def get_filenames(filename):
     """
-    Return list of unique file references.
+    Return list of unique file references within a passed file.
     """
     with open(filename, 'rt', encoding='utf8') as file:
         words = re.split("[\n\\, \-!?;'//]", file.read())
         #files = filter(str.endswith(('csv', 'zip')), words)
         files = set(filter(lambda s: s.endswith(('.csv', '.zip', '.pdf', '.txt', '.tsv', '.cfg', '.ini')), words))        
         return list(files)
+    
+
+def get_readme_about(filename):
+    """
+    Extract the About, here defined as the first, section of Github repo readmes 
+    so that it may be provided as a model description.
+    
+    filename: Readme.MD usually
+    """
+    with open(filename, 'r', encoding="utf8") as f:
+        txt = f.read()
+        about =  re.search('#([^#]*)#', txt)
+        about = about.group(0) if about else None
+        return about
     
 
 

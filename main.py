@@ -42,6 +42,7 @@ import argparse, json, os
 import modules.language as language
 import modules.python_miner as pyminer
 import modules.r_miner as rminer
+import modules.repo_miner as repo_miner
 
 
 def main():
@@ -50,10 +51,14 @@ def main():
         epilog='Good luck.'        
         )
     parser.add_argument('--repo', help="GitHub repo path in double quotes")
+    parser.add_argument('--url',  help="GitHub repo URL in double quotes" )
     args = parser.parse_args()
            
     repos = []
-    if args.repo != None:
+    url = None
+    if args.url != None: 
+        url = args.url
+    elif args.repo != None:
         repos.append(args.repo)
     else: 
         # resort to reading from parameters.json
@@ -61,18 +66,35 @@ def main():
         params = json.loads(params)
         for repo in params['repositories']:
             repos.append(repo['path'])
-
-    for repo in repos:          
-        print(repo, os.path.basename(repo))
-        
-        lang = language.detect_language (repo)    
-        
-        if (lang == '.py'):
-            pyminer.PyRepoMiner(repo)
-        elif (lang == '.R'):
-            rminer.RRepoMiner(repo)
-        
-        print()
+    
+    if url != None:
+        try:
+            repo_miner.clone_repo(url)
+            repo_name = os.path.splitext(os.path.basename(url))[0]
+            
+            lang = language.detect_language ('tmp') 
+                        
+            if (lang == '.py'):
+                pyminer.PyRepoMiner('tmp', repo_name)
+            elif (lang == '.R'):
+                rminer.RRepoMiner('tmp', repo_name)
+            
+            print()
+            
+            repo_miner.delete_repo()
+            
+        except Exception as e:
+            print(e)
+    else:        
+        for repo in repos:          
+            lang = language.detect_language(repo)    
+            
+            if (lang == '.py'):
+                pyminer.PyRepoMiner(repo, os.path.basename(repo))
+            elif (lang == '.R'):
+                rminer.RRepoMiner(repo, os.path.basename(repo))
+            
+            print()
         
 
 

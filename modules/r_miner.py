@@ -16,8 +16,9 @@ class RRepoMiner:
     """
     R-specific repo miner.
     """
-    def __init__(self, repo):
-        self.repo_path = repo
+    def __init__(self, repo_path, repo_name):
+        self.repo_path = repo_path
+        self.repo_name = repo_name
 
         if os.name == 'nt':
             self.sep = '\\'
@@ -77,6 +78,7 @@ class RRepoMiner:
         ## Try to id the entry point file based on the identified language.
         ## Requires Iterating again, which makes this slow.
         yaml_dict = [{'language' : 'R'}]
+        abouts = []
         comments = []        
         data_files = set()
         docker = None
@@ -117,6 +119,11 @@ class RRepoMiner:
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
                     
                 elif file.lower().startswith('readme'):
+                    # Extract about section if exists.
+                    about = util.get_readme_about(full_filename)
+                    if about:
+                        abouts.append({full_filename: about})
+                    
                     # load entire readme until a better desription is generated
                     with open(full_filename, 'rt', encoding='utf8') as readme_file:
                         readmes.append({ full_filename: readme_file.read()})
@@ -161,12 +168,19 @@ class RRepoMiner:
             print('\t\t', i)
         print() 
         
-        ## Remove common path from readme filenames.
-        readmes = util.replace_cp_in_dict_list(readmes, cp)
+        ## Remove common path from readme and about (same as readme) filenames.
+        readmes = util.replace_cp_in_dict_list(readmes, cp)        
+        abouts  = util.replace_cp_in_dict_list(abouts, self.repo_path) 
 
         ## Append Yaml dictionary and write to file.        
         owner_info = repominer.report_owner(self.repo_path)
         yaml_dict.append(dict(owner=owner_info))
+        
+        
+        if about:
+            yaml_dict.append(dict(about=abouts))
+        else:
+            yaml_dict.append(dict(about=None))
                 
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
@@ -182,5 +196,5 @@ class RRepoMiner:
         yaml_dict.append(dict(comments=comments))
         
         ## Write yaml file using utility to control newlines in comments.
-        util.yaml_write_file(os.path.basename(self.repo_path), yaml_dict)
+        util.yaml_write_file(os.path.basename(self.repo_name), yaml_dict)
         
