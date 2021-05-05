@@ -77,8 +77,6 @@ class ArbitraryRepoMiner:
                     # file_names
                     data_files.update(util.get_filenames(full_filename))
                     
-        
-            
         ## Report urls.
         print('\t', len(urls), 'url(s) found:')        
         for i in urls:            

@@ -1,15 +1,34 @@
-# domain-model-examiner
-World Modelers Domain Model Examiner (DMX) - repo install / startup automaton
+# Domain-Model-Examiner (DMX)
 
-## Usage
+The goal of this process is to perform machine reading over the model codebase in order to automatically extract key metadata about:
+- Input files
+- Output files
+- System requirements
+- Software requirements
+- Model entry points
+- Model descriptions
+- Maintainer information
 
-First, run:
+
+## Installation
+
+Run:
 
 ```
 pip install -r requirements.txt
 ```
 
-Then, clone or download the repository of interest. For example:
+## Usage
+
+
+#### List command line options
+```
+python main.py --help
+```
+
+#### Process Local Repository
+
+Clone or download the repository of interest. For example:
 
 ```
 cd /tmp
@@ -22,31 +41,28 @@ Next, analyze this repo with:
 python main.py --repo="/tmp/dummy-model"
 ```
 
-# research phase (Trello description)
+#### Process Remote Repository
 
-**Overview**:
-Look at ~5 github repositories or codebases to try to identify:
+```
+python main.py --url="https://github.com/jataware/dummy-model.git"
+```
 
-1. `language`
-2. execution command
-3. OS requirements
-4. hardware requirements
-5. settings files
-6. external data calls, API calls, downloads, etc.
+This creates and deletes a tempory folder 'tmp'.
 
-> We want to identify any piece of information that can be _automatically_ extracted and would be useful to installing, setting up, and running a model
+#### Output
 
-**Repos to examine**:
+The application produces a .yaml file with prefix 'dmx-' concatenated with the repo name. 
 
-1. https://github.com/jataware/dummy-model
-2. https://github.com/djgroen/FabFlee
-3. https://github.com/jataware/maxhop
-4. https://github.com/DSSAT/pythia/tree/develop [`develop` branch]
-5. https://github.com/mjpuma/FSC-WorldModelers 
+### 
 
-> Note that Pythia is a highly abstracted Python version of the [DSSAT model](https://github.com/DSSAT/dssat-csm-os). 
+## Testing Repositories
 
-**Other**:
+* https://github.com/jataware/dummy-model
+* https://github.com/djgroen/FabFlee
+* https://github.com/jataware/maxhop
+* https://github.com/DSSAT/pythia/tree/develop [`develop` branch]
+* https://github.com/mjpuma/FSC-WorldModelers 
 
-1. Are there other projects that do this well?
-2. Can we extract model descriptions, parameter descriptions, input/output descriptions from the documentation or code?
+
+Note that Pythia is a highly abstracted Python version of the [DSSAT model](https://github.com/DSSAT/dssat-csm-os). 
+
