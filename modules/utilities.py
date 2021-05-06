@@ -53,6 +53,7 @@ def get_filenames(filename):
         print(e)
         return []
 
+
 # =============================================================================
 # def get_readme_about(filename):
 #     """
@@ -94,7 +95,7 @@ def get_urls(filename):
                             url = ('.'.join(ext[1:3]), url) # create 2nd level domain from ext object, add as first element in tuple(to use as key later)                     
                             urls.append(url)     
     except Exception as e:
-        print(filename, e)
+        print('get urls error in ' + filename, e)
         
     return urls
 

@@ -4,6 +4,7 @@ Miner for Python repos.
 
 """
 
+import json
 import os
 import modules.utilities as util
 import modules.docker_miner as dminer
@@ -29,21 +30,80 @@ class PyRepoMiner:
     def get_imports(self, filename):
         """
         Return unique set of imports.
-        Improvement would be to ignore the repo's units.
-        
-        TODO: parse command-delimited imports
+        Improvement would be to ignore the repo's units.        
         """
+                
         imports = set()
         with open(filename, 'r', encoding="utf8") as f:
             for line in f:
-                if line.startswith('import'):
-                    imports.add(line.split()[1].split('.')[0])
-    
+                line = line.split('#')[0] # remove inline comments
+                
+                if line.startswith('import') and ',' in line and 'as' in line:                    
+                    # e.g. import argparse as ap, json as js, os as opsys
+                    line = line.replace('import', '').replace('as','')
+                    sa = line.split(',') # break in to library and alias pairs
+                    for s in sa:
+                        lib = s.split()[0].strip
+                        if not lib.startswith('.'):
+                            imports.add(s.split()[0].strip) # add library name   
+                        
+                elif line.startswith('import') and ',' in line:                               
+                    # e.g. import argparse, json, os 
+                    line = line.replace('import', '')
+                    sa = line.split(',')
+                    for s in sa:
+                        lib = s.strip()
+                        if not lib.startswith('.'):
+                            imports.add(s.strip())                
+                    
+                elif line.startswith('import'):
+                    # e.g. import argparse
+                    #imports.add(line.split()[1].split('.')[0])
+                    lib = line.split()[1]
+                    if not lib.startswith('.'):
+                        imports.add(line.split()[1])
+                    
+                elif line.startswith('from') and 'import' in line:
+                    # eg from git import RemoteProgress, Repo
+                    sa = line.split()
+                    # iterate tokens in line after the "import"
+                    lib = sa[1]
+                    if not lib.startswith('.'):
+                        for l in sa[3:]:
+                            imports.add(sa[1] + '.' + l.strip(','))
+                        
         return imports
 
 
-
-
+    def get_model_types_from_libraries(self, imports):
+        """
+          Return list of model_types from model-type-libraries based on libraries.
+          
+          example:
+              import import scipy.ndimage.fourier
+              library: "scipy.ndimage"
+        
+        """
+        model_types = set()
+        imports = set(item.lower() for item in imports) # convert to lowercase set
+        library_filename = 'data_files' + self.sep + 'model-type-libraries.json' # already lowercase
+        matches = []
+        try:
+           library_file = open(library_filename).read()
+           library_file = json.loads(library_file)
+           for lang in library_file['languages']:
+               if (lang['name'] == 'Python'):
+                   for model in lang['model_types']:
+                       for lib_name in model['libraries']:                    
+                           # match if the entire library name matches, or if the library name
+                           # is the prefix for the import. 
+                           matches = [i for i in imports if (lib_name in i.split() or i.startswith(lib_name + '.'))]  
+                           if len(matches) > 0:                               
+                               model_types.add(model['name'])                                                        
+        except Exception as e:
+            print('get_model_types_from_libraries error', e)
+        return model_types
+    
 
     def get_output(self, filename):
         """
@@ -65,10 +125,7 @@ class PyRepoMiner:
         file = open()
         write...
         close()
-        
-    
-        """
-        
+        """    
         def get_open_filename(line):
             quoted_stuff = re.search('"([^"]*)"', line)
             if quoted_stuff:
@@ -183,7 +240,11 @@ class PyRepoMiner:
         for f in mainfiles:
             print('\t\t' + f)
                                     
-        ## Report imports.
+        ## Report imports and model types.        
+        model_types = sorted(self.get_model_types_from_libraries(imports))
+        print('\tmodel types:', model_types)
+        
+        
         imports = sorted(imports)
         print('\t', len(imports), 'import(s) found:')        
         print('\t\t', end='')
@@ -223,6 +284,7 @@ class PyRepoMiner:
         else:
             yaml_dict.append(docker)
         
+        yaml_dict.append(dict(model_types=model_types))
         yaml_dict.append(dict(imports=imports))
         yaml_dict.append(dict(main_files=mainfiles))
         yaml_dict.append(dict(data_files=sorted(data_files)))
@@ -238,8 +300,15 @@ class PyRepoMiner:
             
             
             
-            
-            
+"""          
+line = 'from git import RemoteProgress, Repo'
+line = 'import modules.getcomments as getcomments'
+line = 'from itertools import groupby'
+sa = line.split()
+print(sa[3:])
+for l in sa[3:]:
+    print(sa[1] + '.' + l.strip(','))
+"""                                  
             
             
             

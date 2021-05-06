@@ -1,0 +1,118 @@
+{
+	"languages":
+	[ 
+		{
+			"name": "Python",
+			"model_types": [
+				{
+					"name": "Artificial Neural Network/ Deep Learning",
+					"libraries": [
+						"sklearn.neural_network",
+						"torch.nn",
+						"tensorflow.keras",
+						"neurolab",
+						"lasagne",
+						"theano"
+					]
+				},				
+				{
+					"name": "Audio",
+					"libraries": [
+						"torchaudio"
+					]
+				},
+				{
+					"name": "Geospatial Data / Terrain Models",
+					"libraries": [
+						"osgeo",
+						"gdal",
+						"ogr",
+						"osr",
+						"gdalnumeric",
+						"gdalconst",
+						"rasterio"
+					]
+				},
+				{
+					"name": "Images/Video",
+					"libraries": [
+						"pil", 
+						"timm",
+						"torchvision",
+						"scipy.ndimage",
+						"tensorflow.keras.preprocessing.image"
+					]
+				},
+				{
+					"name": "Natural Language Processing (NLP)",
+					"libraries": [
+						"transformers"
+					]
+				},
+				{
+					"name": "Integration / Ordinary Differential Equations (ODE)",
+					"libraries": [
+						"scipy.integrate",
+						"odespy",
+						"ode",
+						"diffeqpy",
+						"hamSolver"
+					]
+				},
+				{
+					"name": "Reinforcement Learning (RL)",
+					"libraries": [
+						"gym"
+					]
+				},		
+				{
+					"name": "Signal Processing",
+					"libraries": [
+						"scipy.signal"
+					]
+				},
+				{
+					"name": "Simulation / Uncertainty Quantification",
+					"libraries": [
+						"chaospy",
+						"easyvvuq",				
+						"scipy.interpolate",
+						"uqp",
+						"uqpy"
+					]
+				},
+				{
+					"name": "Supervised Learning",
+					"libraries": [
+						"sklearn.linear_model",
+						"sklearn.discriminant_analysis",
+						"sklearn.kernel_ridge",
+						"sklearn.svm",
+						"sklearn.gaussian_process",
+						"sklearn.tree"
+					]
+				},
+				{
+					"name": "Text",
+					"libraries": [
+						"torchtext",
+						"tensorflow.keras.layers.experimental.preprocessing.textvectorization",
+						"tensorflow.keras.layers.embedding"
+					]
+				},
+				{
+					"name": "Unsupervised Learning",
+					"libraries": [
+						"sklearn.cluster",
+						"sklearn.mixture",
+						"sklearn.manifold",
+						"sklearn.decomposition",
+						"sklearn.covariance"
+						
+					]
+				}
+			
+			]
+		}
+	]
+}
