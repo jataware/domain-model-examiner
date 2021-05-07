@@ -32,7 +32,23 @@ class RRepoMiner:
         """
         Return set of libraries.
         
-        install.packages("tidyr", repos = repo)
+        Examples:
+            
+        * install.packages("tidyr", repos = repo)
+        
+        * library(tidyr)
+        
+        * x<-c("plyr", "psych", "tm")
+        * lapply(x, require, character.only = TRUE)
+        
+        * lapply(c("gganimate", "tidyverse", "gapminder"), require, character.only = TRUE)
+        
+        * if easypackages is installed:
+        ** packages("dplyr", "ggplot2", "RMySQL", "data.table")
+        ** my_packages <- c("dplyr", "ggplot2", "RMySQL", "data.table")
+        ** libraries(my_packages)
+        **libraries("dplyr", "ggplot2", "RMySQL", "data.table")
+        
         """
         libraries = set()
         with open(filename, 'r', encoding="utf8") as f:
@@ -140,6 +156,10 @@ class RRepoMiner:
         mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
         for f in mainfiles:
             print('\t\t' + f)
+            
+        ## Report imports and model types.        
+        model_types = sorted(util.get_model_types_from_libraries(libraries, self.sep, 'R'))
+        print('\tmodel types:', model_types)
                     
         ## Report libraries.
         libraries = sorted(libraries)
@@ -182,6 +202,7 @@ class RRepoMiner:
         else:
             yaml_dict.append(docker)
             
+        yaml_dict.append(dict(model_types=model_types))            
         yaml_dict.append(dict(libraries=libraries))
         yaml_dict.append(dict(main_files=mainfiles))
         yaml_dict.append(dict(data_files=sorted(data_files)))

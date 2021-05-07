@@ -4,7 +4,7 @@ Miner for Python repos.
 
 """
 
-import json
+
 import os
 import modules.utilities as util
 import modules.docker_miner as dminer
@@ -73,37 +73,6 @@ class PyRepoMiner:
                             imports.add(sa[1] + '.' + l.strip(','))
                         
         return imports
-
-
-    def get_model_types_from_libraries(self, imports):
-        """
-          Return list of model_types from model-type-libraries based on libraries.
-          
-          example:
-              import import scipy.ndimage.fourier
-              library: "scipy.ndimage"
-        
-        """
-        model_types = set()
-        imports = set(item.lower() for item in imports) # convert to lowercase set
-        library_filename = 'data_files' + self.sep + 'model-type-libraries.json' # already lowercase
-        matches = []
-        try:
-           library_file = open(library_filename).read()
-           library_file = json.loads(library_file)
-           for lang in library_file['languages']:
-               if (lang['name'] == 'Python'):
-                   for model in lang['model_types']:
-                       for lib_name in model['libraries']:                    
-                           # match if the entire library name matches, or if the library name
-                           # is the prefix for the import. 
-                           matches = [i for i in imports if (lib_name in i.split() or i.startswith(lib_name + '.'))]  
-                           if len(matches) > 0:                               
-                               model_types.add(model['name'])                                                        
-        except Exception as e:
-            print('get_model_types_from_libraries error', e)
-        return model_types
-    
 
     def get_output(self, filename):
         """
@@ -241,7 +210,7 @@ class PyRepoMiner:
             print('\t\t' + f)
                                     
         ## Report imports and model types.        
-        model_types = sorted(self.get_model_types_from_libraries(imports))
+        model_types = sorted(util.get_model_types_from_libraries(imports, self.sep, 'Python'))
         print('\tmodel types:', model_types)
         
         

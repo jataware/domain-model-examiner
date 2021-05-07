@@ -9,16 +9,22 @@
 					"libraries": [
 						"sklearn.neural_network",
 						"torch.nn",
+						"tensorflow",
 						"tensorflow.keras",
 						"neurolab",
 						"lasagne",
-						"theano"
+						"theano",
+						"caffe",
+						"mxnet"
 					]
 				},				
 				{
 					"name": "Audio",
 					"libraries": [
-						"torchaudio"
+						"torchaudio",
+						"librosa",
+						"madmom",
+						"pyaudioanalysis"
 					]
 				},
 				{
@@ -30,7 +36,8 @@
 						"osr",
 						"gdalnumeric",
 						"gdalconst",
-						"rasterio"
+						"rasterio",
+						"cartopy"
 					]
 				},
 				{
@@ -40,13 +47,25 @@
 						"timm",
 						"torchvision",
 						"scipy.ndimage",
-						"tensorflow.keras.preprocessing.image"
+						"tensorflow.keras.preprocessing.image",
+						"cv",
+						"simplecv"
 					]
 				},
 				{
 					"name": "Natural Language Processing (NLP)",
 					"libraries": [
-						"transformers"
+						"transformers",
+						"nltk",
+						"pynlpl",
+						"spacy"
+					]
+				},
+				{
+					"name": "Network / Graph Analysis",
+					"libraries":[
+						"networkx",
+						"pyunicorn"
 					]
 				},
 				{
@@ -62,7 +81,13 @@
 				{
 					"name": "Reinforcement Learning (RL)",
 					"libraries": [
-						"gym"
+						"gym",
+						"pyqlearning",
+						"rl",
+						"tensorforce",
+						"mametoolkit",
+						"mushroom_rl",
+						"chainerrl"
 					]
 				},		
 				{
@@ -78,7 +103,8 @@
 						"easyvvuq",				
 						"scipy.interpolate",
 						"uqp",
-						"uqpy"
+						"uqpy",
+						"simpy"
 					]
 				},
 				{
@@ -107,7 +133,185 @@
 						"sklearn.mixture",
 						"sklearn.manifold",
 						"sklearn.decomposition",
-						"sklearn.covariance"
+						"sklearn.covariance",
+						"sompy"
+						
+					]
+				}
+			
+			]
+		},
+		{
+			"name": "R",
+			"model_types": [
+				{
+					"name": "Artificial Neural Network/ Deep Learning",
+					"libraries": [
+						"fastai",
+						"torch",
+						"nnlib2Rcpp",
+						"rtorch",
+						"deepnn",
+						"ruta",
+						"keras",
+						"kerasr",
+						"tensorflow",
+						"neuralnet",
+						"rsnns",
+						"fcnn4r",
+						"darch",
+						"deeplearning",
+						"deepnet",
+						"rnn",
+						"rcppdl",
+						"pnn",
+						"qrnn",
+						"monmlp",
+						"nnet",
+						"darch",
+						"deepr",
+						"rnn",
+						"fcnn4r"
+					]
+				},				
+				{
+					"name": "Audio",
+					"libraries": [
+						"audio",
+						"av",
+						"readr",
+						"tuner",
+						"wrassp"
+					]
+				},
+				{
+					"name": "General Regression Neural Network",
+					"libraries": [
+						"yager"
+					]
+				},
+				{
+					"name": "Geospatial Data / Terrain Models",
+					"libraries": [
+						"sp",
+						"raster",
+						"maptools",
+						"rgeos",
+						"dismo",
+						"rgooglemaps",
+						"googlevis",
+						"rworldmap",
+						"spatial",
+						"ecespa",
+						"geor",
+						"spdep",
+						"spgrass6",
+						"rpygeo",
+						"rsaga",
+						"spsextante",
+						"rangemapper",
+						"rgdal",
+						"spgdal",
+						"chloroplethr",
+						"chloroplethrmaps"
+
+					]
+				},
+				{
+					"name": "Images/Video",
+					"libraries": [
+						"torchvision",
+						"magick",
+						"zeallot",
+						"platypus",
+						"av"
+					]
+				},
+				{
+					"name": "Natural Language Processing (NLP)",
+					"libraries": [
+						"softmaxreg",
+						"tidytext",
+						"topicmodels",
+						"korpus",
+						"lsa",
+						"opennlp",
+						"quanteda",
+						"spacyr",
+						"text2vec",
+						"tm",
+						"nlp"
+					]
+				},
+				{
+					"name": "Network / Graph Analysis",
+					"libraries":[
+						"igraph",
+						"netrankr",
+						"tnet"
+					]
+				},
+				{
+					"name": "Integration / Ordinary Differential Equations (ODE)",
+					"libraries": [
+						"desolve",
+						"reactran",
+						"bvpsolve",
+						"rootsolve",
+						"pbsddesolve",
+						"sde",
+						"pomp",
+						"calculus",
+						"rxode"
+					]
+				},
+				{
+					"name": "Reinforcement Learning (RL)",
+					"libraries": [
+						"reinforcementlearning",
+						"mdptoolbox",
+						"rlr"
+					]
+				},		
+				{
+					"name": "Signal Processing",
+					"libraries": [
+						"signal"
+					]
+				},
+				{
+					"name": "Simulation / Uncertainty Quantification",
+					"libraries": [
+						"gmdh",
+						"ipred",
+						"simulator",
+						"simmer",
+						"parsim"
+					]
+				},
+				{
+					"name": "Supervised Learning",
+					"libraries": [
+						"randomforest",
+						"e1071",
+						"rpart",
+						"caret",
+						"klar",
+						"rpart",
+						"kernlab"
+					]
+				},
+				{
+					"name": "Text",
+					"libraries": [
+						"tm"
+					]
+				},
+				{
+					"name": "Unsupervised Learning",
+					"libraries": [
+						"cluster",
+						"clusterr"
 						
 					]
 				}

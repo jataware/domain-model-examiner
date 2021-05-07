@@ -5,6 +5,7 @@ Utitliies
 """
 
 from itertools import groupby
+import json
 import modules.getcomments as getcomments
 from operator import itemgetter
 import os
@@ -52,6 +53,39 @@ def get_filenames(filename):
     except Exception as e:
         print(e)
         return []
+
+
+
+def get_model_types_from_libraries(imports, self_sep, language_name):
+        """
+          Return list of model_types from model-type-libraries based on libraries.
+          
+          example:
+              import import scipy.ndimage.fourier
+              library: "scipy.ndimage"
+        
+        """
+        model_types = set()
+        imports = set(item.lower() for item in imports) # convert to lowercase set
+        library_filename = 'data_files' + self_sep + 'model-type-libraries.json' # already lowercase
+        matches = []
+        try:
+           library_file = open(library_filename).read()
+           library_file = json.loads(library_file)
+           for lang in library_file['languages']:
+               if (lang['name'] == language_name):
+                   for model in lang['model_types']:
+                       for lib_name in model['libraries']:                    
+                           # match if the entire library name matches, or if the library name
+                           # is the prefix for the import. 
+                           matches = [i for i in imports if (lib_name in i.split() or i.startswith(lib_name + '.'))]  
+                           if len(matches) > 0:                               
+                               model_types.add(model['name'])                                                        
+        except Exception as e:
+            print('get_model_types_from_libraries error', e)
+        return model_types
+
+
 
 
 # =============================================================================
