@@ -47,15 +47,43 @@ class RRepoMiner:
         ** packages("dplyr", "ggplot2", "RMySQL", "data.table")
         ** my_packages <- c("dplyr", "ggplot2", "RMySQL", "data.table")
         ** libraries(my_packages)
-        **libraries("dplyr", "ggplot2", "RMySQL", "data.table")
+        ** libraries("dplyr", "ggplot2", "RMySQL", "data.table")
         
         """
         libraries = set()
+        last_c_line = ''
         with open(filename, 'r', encoding="utf8") as f:
-            for line in f:
-                if line.startswith('library') or line.startswith('install.packages'): 
+            for line in f:                
+                line = line.strip(' ') # strip spaces in case of wierd formatting
+                if line.startswith(tuple(['library','install.packages','require'])): 
+                    # standard example e.g. library(tidyr)
                     library = line.strip().split('(')[1].split(',')[0].split(')')[0]
-                    libraries.add(library.strip('"'))
+                    libraries.add(library.strip('"').strip('\''))
+                elif line.startswith('lapply(c(') and ('library' in line or 'require' in line):
+                    # using lapply to pass array of libraries to function
+                    # e.g.: lapply(c("gganimate", "tidyverse", "gapminder"), require, character.only = TRUE)
+                    # add everything between single and double quotes
+                    libraries = libraries | set(re.findall(r"['\"](.*?)['\"]", line))                   
+                elif line.startswith('lapply(') and ('library' in line or 'require' in line):
+                    # same as above but the libraries have been assigned to a var
+                    # tricky - try to use last_c_line to identify library names
+                    
+                    # id var name in line and last_c_line; load libs if a match
+                    #'x<-c("plyr", "psych", "tm")'
+                    last_c_var_name = last_c_line.split('=')[0] if '=' in last_c_line else last_c_line.split('<-')[0] if '<-' in last_c_line else None
+                                        
+                    #'lapply(x, require, character.only = TRUE)'
+                    line_var_name = line.split('(')[1].split(',')[0]
+                    
+                    if last_c_var_name.strip() == line_var_name.strip() and not line_var_name == None:
+                        
+                        # id'd a lapply(var_name, requires or library; add the parsed library names
+                        libraries = libraries | set(re.findall(r"['\"](.*?)['\"]", last_c_line))
+                    
+                elif 'c(' in line and ('=' in line or '<-' in line):
+                    # record last line with a variable assigned to a vector creator (c)
+                    last_c_line = line
+        
     
         return libraries
         
