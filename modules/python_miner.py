@@ -27,12 +27,11 @@ class PyRepoMiner:
         self.mine_files()
        
         
-    def get_imports(self, filename):
+    def get_imports(self, filename, root_dirs=()):
         """
         Return unique set of imports.
         Improvement would be to ignore the repo's units.        
-        """
-                
+        """                
         imports = set()
         with open(filename, 'r', encoding="utf8") as f:
             for line in f:
@@ -44,7 +43,7 @@ class PyRepoMiner:
                     sa = line.split(',') # break in to library and alias pairs
                     for s in sa:
                         lib = s.split()[0].strip
-                        if not lib.startswith('.'):
+                        if not lib.startswith(root_dirs):
                             imports.add(s.split()[0].strip) # add library name   
                         
                 elif line.startswith('import') and ',' in line:                               
@@ -53,14 +52,14 @@ class PyRepoMiner:
                     sa = line.split(',')
                     for s in sa:
                         lib = s.strip()
-                        if not lib.startswith('.'):
+                        if not lib.startswith(root_dirs):
                             imports.add(s.strip())                
                     
                 elif line.startswith('import'):
                     # e.g. import argparse
                     #imports.add(line.split()[1].split('.')[0])
                     lib = line.split()[1]
-                    if not lib.startswith('.'):
+                    if not lib.startswith(root_dirs):
                         imports.add(line.split()[1])
                     
                 elif line.startswith('from') and 'import' in line:
@@ -68,7 +67,7 @@ class PyRepoMiner:
                     sa = line.split()
                     # iterate tokens in line after the "import"
                     lib = sa[1]
-                    if not lib.startswith('.'):
+                    if not lib.startswith(root_dirs):
                         for l in sa[3:]:
                             imports.add(sa[1] + '.' + l.strip(','))
                         
@@ -157,7 +156,17 @@ class PyRepoMiner:
         output_files = set() # organize by source, output_file path
         readmes = []
         urls = set()
+        
+        root_dirs = ()
         for root, dirs, files in os.walk(self.repo_path):
+            if root == self.repo_path:
+                # Mechanism in get_imports to ignore local libraries based on 
+                # directories in path root folder. Also add "." to the list and 
+                # converted to a tuple to be used with str.startswith.
+                root_dirs = dirs
+                root_dirs.append('.')
+                root_dirs = tuple(root_dirs)           
+                
             for file in files:
                 filename, file_ext = os.path.splitext(file) 
                 full_filename = root + self.sep + file
@@ -167,7 +176,7 @@ class PyRepoMiner:
                         mainfiles.append(full_filename)
                                        
                     # Collate all imports                    
-                    imports.update(self.get_imports(full_filename))
+                    imports.update(self.get_imports(full_filename, root_dirs))
     
                     # output files
                     temp_list = self.get_output(full_filename)

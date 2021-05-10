@@ -28,6 +28,17 @@
 					]
 				},
 				{
+					"name": "Forecasting",
+					"libraries":[
+						"statsmodels.tsa",
+						"statsmodels.api",
+						"fbphophet",
+						"hts",
+						"pmdarima",
+						"pyramid-arima"
+					]
+				},
+				{
 					"name": "Geospatial Data / Terrain Models",
 					"libraries": [
 						"osgeo",
@@ -37,7 +48,8 @@
 						"gdalnumeric",
 						"gdalconst",
 						"rasterio",
-						"cartopy"
+						"cartopy",
+						"h3"
 					]
 				},
 				{
@@ -58,7 +70,13 @@
 						"transformers",
 						"nltk",
 						"pynlpl",
-						"spacy"
+						"spacy",
+						"stanza",
+						"stanfordcorenlp",
+						"pycorenlp",
+						"corenlp_pywrap",
+						"corenlp",
+						"pattern"
 					]
 				},
 				{
@@ -134,11 +152,9 @@
 						"sklearn.manifold",
 						"sklearn.decomposition",
 						"sklearn.covariance",
-						"sompy"
-						
+						"sompy"						
 					]
-				}
-			
+				}			
 			]
 		},
 		{
@@ -214,7 +230,6 @@
 						"spgdal",
 						"chloroplethr",
 						"chloroplethrmaps"
-
 					]
 				},
 				{
@@ -315,7 +330,6 @@
 						
 					]
 				}
-			
 			]
 		}
 	]
