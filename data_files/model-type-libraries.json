@@ -331,6 +331,213 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "Julia",
+			"model_types": [
+				{
+					"name": "Artificial Neural Network/ Deep Learning",
+					"libraries": [
+						"nerualpde",
+						"geometricflux",
+						"mocha",
+						"knet",
+						"mljmodels",
+						"mlj",
+						"scikitlearn",
+						"strada",
+						"merlin",
+						"tensorflow",
+						"mxnet",
+						"machinelearning",
+						"ann",
+						"recurrentnn",
+						"neuralnets",
+						"fann",
+						"rnn"
+					]
+				},				
+				{
+					"name": "Audio",
+					"libraries": [
+						"musicprocessing",
+						"sound",
+						"mp3",
+						"world"
+					]
+				},
+				{
+					"name": "Forecasting",
+					"libraries":[
+						"timeseries",
+						"kernaldensity",
+						"temporal",
+						"causemap"
+					]
+				},
+				{
+					"name": "Geospatial Data / Terrain Models",
+					"libraries": [
+						"geodesy",
+						"gdal",
+						"geointerface",
+						"geojson",
+						"shapefile",
+						"gadm",
+						"libgeos",
+						"proj4",
+						"gmt",
+						"openstreetmapx",
+						"geostats"
+					]
+				},
+				{
+					"name": "Images/Video",
+					"libraries": [
+						"metalhead",
+						"images"
+					]
+				},
+				{
+					"name": "Natural Language Processing (NLP)",
+					"libraries": [
+						"transformers",
+						"word2vec"
+					]
+				},
+				{
+					"name": "Network / Graph Analysis",
+					"libraries":[
+						"lightgraphs",
+						"graphs"
+					]
+				},
+				{
+					"name": "Integration / Ordinary Differential Equations (ODE)",
+					"libraries": [
+						"diffeqflux",
+						"differentialequations",
+						"diffeqbayes"
+					]
+				},
+				{
+					"name": "Reinforcement Learning (RL)",
+					"libraries": [						
+						"deepqlearning"
+					]
+				},		
+				{
+					"name": "Signal Processing",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Simulation / Uncertainty Quantification",
+					"libraries": [
+						"sims",
+						"uncertaintyquantification",
+						"interpolations"
+					]
+				},
+				{
+					"name": "Supervised Learning",
+					"libraries": [
+						"decisiontree",
+						"supervisedlearning",
+						"gurls",
+						"svm"
+					]
+				},
+				{
+					"name": "Text",
+					"libraries": [
+						"textanalysis",
+						"text"
+					]
+				},
+				{
+					"name": "Unsupervised Learning",
+					"libraries": [			
+						"clustering",
+						"multivariateanalysis"
+					]
+				}			
+			]
+		},
+		{
+			"name": "",
+			"model_types": [
+				{
+					"name": "Artificial Neural Network/ Deep Learning",
+					"libraries": [
+					]
+				},				
+				{
+					"name": "Audio",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Forecasting",
+					"libraries":[
+					]
+				},
+				{
+					"name": "Geospatial Data / Terrain Models",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Images/Video",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Natural Language Processing (NLP)",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Network / Graph Analysis",
+					"libraries":[
+					]
+				},
+				{
+					"name": "Integration / Ordinary Differential Equations (ODE)",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Reinforcement Learning (RL)",
+					"libraries": [
+					]
+				},		
+				{
+					"name": "Signal Processing",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Simulation / Uncertainty Quantification",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Supervised Learning",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Text",
+					"libraries": [
+					]
+				},
+				{
+					"name": "Unsupervised Learning",
+					"libraries": [			
+					]
+				}			
+			]
 		}
 	]
 }

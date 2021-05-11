@@ -18,7 +18,8 @@ languages = {'.py': 'Python',
              '.pas': 'Pascal',
              '.pl': 'Perl',
              '.f': 'Fortran',
-             '.go': 'Go'
+             '.go': 'Go',
+             '.jl': 'Julia'
              }
               
 def detect_language(repo_path):           

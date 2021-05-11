@@ -1,8 +1,4 @@
-"""
-
-Miner for Python repos.
-
-"""
+"""Miner for Julia repos."""
 
 
 import os
@@ -11,10 +7,10 @@ import modules.docker_miner as dminer
 import modules.repo_miner as repominer
 import re
 
-class PyRepoMiner:
-    """
-    Python-specific repo miner.
-    """
+
+class JuliaRepoMiner:
+    """Julia-specific repo miner."""
+
     def __init__(self, repo_path, repo_name):
         self.repo_path = repo_path
         self.repo_name = repo_name
@@ -26,65 +22,45 @@ class PyRepoMiner:
 
         self.mine_files()
 
-
     def get_imports(self, filename, root_dirs=()):
         """
-        Return unique set of imports.
+        Return unique set of libraries.
 
-        TODO:
-            from flask import (
-                Flask,
-                render_template,
-                request,
-                redirect,
-                url_for,
-                jsonify,
-                flash,
-            )
+        1. using NiceStuff
+        2. import NiceStuff
+        3. using NiceStuff, NaughtyStuff
+        4. import NiceStuff, NaughtyStuff
+        5. using NiceStuff: nice, DOG, NiceStuff
+        6. import NiceStuff: nice
+        7. ignore: using .AgentsModule, .ModelModule, .RunModule
+
         """
         imports = set()
         with open(filename, 'r', encoding="utf8") as f:
             for line in f:
-                line = line.split('#')[0].strip() # remove inline comments
-
-                if line.startswith('import') and ',' in line and 'as' in line:
-                    # e.g. import argparse as ap, json as js, os as opsys
-                    line = line.replace('import', '').replace('as','')
-                    sa = line.split(',') # break in to library and alias pairs
-                    for s in sa:
-                        lib = s.split()[0].strip()
-                        if not lib.startswith(root_dirs):
-                            imports.add(s.split()[0].strip()) # add library name
-                elif line.startswith('import') and ',' in line:
-                    # e.g. import argparse, json, os
-                    line = line.replace('import', '')
-                    sa = line.split(',')
-                    for s in sa:
-                        lib = s.strip()
-                        if not lib.startswith(root_dirs):
-                            imports.add(s.strip())
-
-                elif line.startswith('import'):
-                    # e.g. import argparse
-                    #imports.add(line.split()[1].split('.')[0])
-                    lib = line.split()[1]
-                    if not lib.startswith(root_dirs):
-                        imports.add(line.split()[1])
-
-                elif line.startswith('from') and 'import' in line:
-                    # eg from git import RemoteProgress, Repo
-                    sa = line.split()
-                    # iterate tokens in line after the "import"
-                    lib = sa[1]
-                    if not lib.startswith(root_dirs):
-                        for l in sa[3:]:
-                            imports.add(sa[1] + '.' + l.strip(','))
-
+                line = line.split('#')[0].strip().strip('!')  # remove inline comments and !
+                if line.startswith('using') or line.startswith('import'):
+                    # strip import, using statements
+                    line = line.replace('using', '').replace('import', '').strip()
+                    if ':' in line:
+                        sa = [x.strip() for x in line.split(':')]
+                        module = sa[0]
+                        if not module.startswith('.'):  # ignore rep libraries
+                            # splite line into array with each item prefixed by "{module}.".
+                            sa = [".".join([module, x.strip()]) for x in sa[1].split(',')]
+                            imports.update(sa)
+                        else:
+                            pass
+                    else:
+                        # parse csv modules, ignore those starting with ".".
+                        sa = [x.strip() for x in line.split(',') if not x.strip().startswith('.')]
+                        imports.update(sa)
         return imports
 
     def get_output(self, filename):
         """
-        Python-specific
+        Julia-specific (looks a lot like Python)
+
         Return set of tuples: source_file, output_file
         Use group_tuple_pairs() to organize these for output to yaml etc.
 
@@ -110,24 +86,23 @@ class PyRepoMiner:
             else:
                 try:
                     return line.split('(')[1].split(',')[0]
-                except:
+                except Exception:
                     return ''
 
         output_files = []
         with open(filename, 'rt', encoding='utf8') as file:
-            lines = file.read().splitlines() # read into a list to allow backtracking
+            lines = file.read().splitlines()  # read into a list to allow backtracking
 
             open_file = False
             with_open = False
             t = ()
             for idx, line in enumerate(lines):
-
-                ## Handle single line write e.g. csv.writer(open())
+                # Handle single line write e.g. csv.writer(open())
                 if ('write' in line and 'open(' in line):
                     t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
                     output_files.append(t)
 
-                ## Handle with open() block
+                # Handle with open() block
                 elif ('with open(' in line and not with_open):
                     t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
                     with_open = True
@@ -135,14 +110,14 @@ class PyRepoMiner:
                     output_files.append(t)
                     with_open = False
 
-                ## Handle assignment of file handle with open()
-                ## e.g.
-                ## file = open()
-                ## write...
-                ## close
+                # Handle assignment of file handle with open()
+                # e.g.
+                # file = open()
+                # write...
+                # close
                 elif ('open(' in line and not open_file):
                     t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
-                elif ( (open_file or with_open) and '.read' in line):
+                elif (open_file or with_open) and '.read' in line:
                     open_file = False
                     with_open = False
                 elif (open_file and 'close(' in line):
@@ -153,13 +128,16 @@ class PyRepoMiner:
         return output_files
 
     def mine_files(self):
-        yaml_dict = [{'language' : 'Python'}]
+        # Probably move to another unit/class.
+        # Try to id the entry point file based on the identified language.
+        # Requires Iterating again, which makes this slow.
+        yaml_dict = [{'language': 'Julia'}]
         comments = []
         data_files = set()
         docker = None
         imports = set()
         mainfiles = []
-        output_files = set() # organize by source, output_file path
+        output_files = set()  # organize by source, output_file path
         readmes = []
         urls = set()
 
@@ -177,12 +155,12 @@ class PyRepoMiner:
                 filename, file_ext = os.path.splitext(file)
                 full_filename = root + self.sep + file
 
-                if file_ext == '.py':
-                    if util.textfile_contains(full_filename, "__name__ == \"__main__\""):
-                        mainfiles.append(full_filename)
+                if file_ext == '.jl':
+                    # if util.textfile_contains(full_filename, "__name__ == \"__main__\""):
+                    #    mainfiles.append(full_filename)
 
                     # Collate all imports
-                    if file.endswith('.py'):
+                    if file.endswith('.jl'):
                         imports.update(self.get_imports(full_filename, root_dirs))
 
                     # output files
@@ -199,7 +177,7 @@ class PyRepoMiner:
                     data_files.update(util.get_filenames(full_filename))
 
                     # comments
-                    comments.append({file: util.get_comments(full_filename) })
+                    comments.append({file: util.get_comments(full_filename)})
 
                 elif file == 'Dockerfile':
                     docker = dict(docker_entrypoint=dminer.report_dockerfile(full_filename))
@@ -208,7 +186,7 @@ class PyRepoMiner:
 
                     # load entire readme until a better desription is generated
                     with open(full_filename, 'rt', encoding='utf8') as readme_file:
-                        readmes.append({ full_filename: readme_file.read()})
+                        readmes.append({full_filename: readme_file.read()})
 
                     # add urls, then further processing
                     temp_list = util.get_urls(full_filename)
@@ -218,17 +196,16 @@ class PyRepoMiner:
                     # file_names
                     data_files.update(util.get_filenames(full_filename))
 
-        ## Report .py files, Remove common path from filenames and output.
-        print('\t', len(mainfiles), '.py files with __main__ found:')
+        # Report .py files, Remove common path from filenames and output.
+        # print('\t', len(mainfiles), '.jl files with __main__ found:')
         cp = util.commonprefix(mainfiles)
-        mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
-        for f in mainfiles:
-            print('\t\t' + f)
+        # mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
+        # for f in mainfiles:
+        #    print('\t\t' + f)
 
-        ## Report imports and model types.
-        model_types = sorted(util.get_model_types_from_libraries(imports, self.sep, 'Python'))
+        # Report imports and model types.
+        model_types = sorted(util.get_model_types_from_libraries(imports, self.sep, 'Julia'))
         print('\tmodel types:', model_types)
-
 
         imports = sorted(imports)
         print('\t', len(imports), 'import(s) found:')
@@ -237,24 +214,23 @@ class PyRepoMiner:
             print(i, end=' ')
         print()
 
-        ## Report output files, a set of tuples.
-        ## Remove common path from source files in output_files
+        # Report output files, a set of tuples.
+        # Remove common path from source files in output_files
         output_files = util.replace_cp_in_tuple_set(output_files, cp)
         print('\t', len(output_files), 'output file(s) found:')
         for i in output_files:
             print('\t\t', i)
         print()
 
-        ## Report urls.
-        #urls = sorted(urls)
+        # Report urls.
+        # urls = sorted(urls)
         print('\t', len(urls), 'url(s) found:')
         for i in urls:
             print('\t\t', i)
         print()
 
-        ## Remove common path from readme filenames.
+        # Remove common path from readme filenames.
         readmes = util.replace_cp_in_dict_list(readmes, cp)
-
 
         # Call Git REST API to get owner info and About description.
         owner_info = repominer.extract_owner(self.repo_path)
@@ -262,7 +238,6 @@ class PyRepoMiner:
 
         about_desc = repominer.extract_about(self.repo_path, self.repo_name)
         yaml_dict.append(dict(about=about_desc))
-
 
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
@@ -280,27 +255,3 @@ class PyRepoMiner:
 
         # Write yaml file using utility to control newlines in comments.
         util.yaml_write_file(os.path.basename(self.repo_name), yaml_dict)
-
-
-
-
-
-"""
-line = 'from git import RemoteProgress, Repo'
-line = 'import modules.getcomments as getcomments'
-line = 'from itertools import groupby'
-sa = line.split()
-print(sa[3:])
-for l in sa[3:]:
-    print(sa[1] + '.' + l.strip(','))
-"""
-
-
-
-
-
-
-
-
-
-

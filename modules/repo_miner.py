@@ -44,42 +44,46 @@ def remove_readonly(func, path, excinfo):
 
 
 def extract_about(repo_path, repo_name):
-    r = Repo(repo_path)
-    repo_owner = r.remotes.origin.url.split('.git')[0].split('/')[-2]
-    
-    endpoint = "https://api.github.com/repos/{0}/{1}".format(repo_owner, repo_name)
-    response = requests.get(endpoint)
-    
-    resp = response.json()
+    try:
+        r = Repo(repo_path)
+        repo_owner = r.remotes.origin.url.split('.git')[0].split('/')[-2]
         
-    if "description" in resp:
-        return resp['description']
-    else:
-        # github sometimes gets uppity about banging on their api.
-        print ('repo description / about not found', response.text)
+        endpoint = "https://api.github.com/repos/{0}/{1}".format(repo_owner, repo_name)
+        response = requests.get(endpoint)
+        
+        resp = response.json()
+            
+        if "description" in resp:
+            return resp['description']
+        else:
+            # github sometimes gets uppity about banging on their api.
+            print ('repo description / about not found', response.text)
         return 'not found'
-    
+    except:
+       return 'Not a valid git repository.' 
     
 def extract_owner(file):
-    r = Repo(file)
-    repo_owner = r.remotes.origin.url.split('.git')[0].split('/')[-2]
-    
-    response = requests.get("https://api.github.com/users/" + repo_owner)
-    user = response.json()
-    
-    if "login" in user:
-        return [{'login' : user['login']},
-                {'repo_url' : r.remotes.origin.url }, 
-                {'type' : user['type']}, 
-                {'name' : user['name']},
-                {'company' : user['company']}, 
-                {'blog' : user['blog']}, 
-                {'location' : user['location']}, 
-                {'bio' : user['bio']} ]
-    else:
-        # github sometimes gets uppity about banging on their api.
-        print (response.text)
-        return response.json
-    
+    try:
+        r = Repo(file)
+        repo_owner = r.remotes.origin.url.split('.git')[0].split('/')[-2]
+        
+        response = requests.get("https://api.github.com/users/" + repo_owner)
+        user = response.json()
+        
+        if "login" in user:
+            return [{'login' : user['login']},
+                    {'repo_url' : r.remotes.origin.url }, 
+                    {'type' : user['type']}, 
+                    {'name' : user['name']},
+                    {'company' : user['company']}, 
+                    {'blog' : user['blog']}, 
+                    {'location' : user['location']}, 
+                    {'bio' : user['bio']} ]
+        else:
+            # github sometimes gets uppity about banging on their api.
+            print (response.text)
+            return response.json
+    except:
+        return 'Not a valid git repository.'
     
     

@@ -10,7 +10,7 @@ import os
 import modules.utilities as util
 import modules.docker_miner as dminer
 import modules.repo_miner as repominer
-
+import modules.language as language
 
 IGNORE_FILE_EXT = ['.txt','.html','.css','.json','xml','.csv','.pdf','.yml','.yaml','.ini', 
                    '.png', '.store', '.mp3', '.jar', '.webp', '.so', '.pack', '',
@@ -23,7 +23,7 @@ class ArbitraryRepoMiner:
     def __init__(self, repo_path, repo_name, lang):
         self.repo_path = repo_path
         self.repo_name = repo_name
-        self.lang = lang if lang != None else 'unknown'
+        self.lang = language.languages[lang] if lang != None else 'unknown'
         
         if os.name == 'nt':
             self.sep = '\\'

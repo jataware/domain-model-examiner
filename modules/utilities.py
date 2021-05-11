@@ -10,9 +10,9 @@ import modules.getcomments as getcomments
 from operator import itemgetter
 import os
 import re
-import tldextract 
+import tldextract
 import yaml
-      
+
 
 def commonprefix(args, sep="\\"):
     """
@@ -27,7 +27,7 @@ def get_comments(filename):
     """
     Get Python and R comments.
     """
-    
+
     comments = []
     try:
         with open(filename, 'r', encoding='utf8') as fp:
@@ -36,9 +36,9 @@ def get_comments(filename):
                 comments.append({ "ln%s" % (start[0]) : comment.rstrip()})
     except Exception as e:
         print(e)
-        
-    return comments       
-           
+
+    return comments
+
 
 def get_filenames(filename):
     """
@@ -48,7 +48,7 @@ def get_filenames(filename):
         with open(filename, 'r', encoding='utf8') as file:
             words = re.split("[\n\\, \-!?;'//]", file.read())
             #files = filter(str.endswith(('csv', 'zip')), words)
-            files = set(filter(lambda s: s.endswith(('.csv', '.zip', '.pdf', '.txt', '.tsv', '.cfg', '.ini')), words))        
+            files = set(filter(lambda s: s.endswith(('.csv', '.zip', '.pdf', '.txt', '.tsv', '.cfg', '.ini')), words))
             return list(files)
     except Exception as e:
         print(e)
@@ -59,14 +59,15 @@ def get_filenames(filename):
 def get_model_types_from_libraries(imports, self_sep, language_name):
         """
           Return list of model_types from model-type-libraries based on libraries.
-          
+
           example:
               import import scipy.ndimage.fourier
               library: "scipy.ndimage"
-        
+
         """
         model_types = set()
         imports = set(item.lower() for item in imports) # convert to lowercase set
+
         library_filename = 'data_files' + self_sep + 'model-type-libraries.json' # already lowercase
         matches = []
         try:
@@ -75,12 +76,12 @@ def get_model_types_from_libraries(imports, self_sep, language_name):
            for lang in library_file['languages']:
                if (lang['name'] == language_name):
                    for model in lang['model_types']:
-                       for lib_name in model['libraries']:                    
+                       for lib_name in model['libraries']:
                            # match if the entire library name matches, or if the library name
-                           # is the prefix for the import. 
-                           matches = [i for i in imports if (lib_name in i.split() or i.startswith(lib_name + '.'))]  
-                           if len(matches) > 0:                               
-                               model_types.add(model['name'])                                                        
+                           # is the prefix for the import.
+                           matches = [i for i in imports if (lib_name in i.split() or i.startswith(lib_name + '.'))]
+                           if len(matches) > 0:
+                               model_types.add(model['name'])
         except Exception as e:
             print('get_model_types_from_libraries error', e)
         return model_types
@@ -91,9 +92,9 @@ def get_model_types_from_libraries(imports, self_sep, language_name):
 # =============================================================================
 # def get_readme_about(filename):
 #     """
-#     Extract the About, here defined as the first, section of Github repo readmes 
+#     Extract the About, here defined as the first, section of Github repo readmes
 #     so that it may be provided as a model description.
-#     
+#
 #     filename: Readme.MD usually
 #     """
 #     with open(filename, 'r', encoding="utf8") as f:
@@ -101,7 +102,7 @@ def get_model_types_from_libraries(imports, self_sep, language_name):
 #         about =  re.search('#([^#]*)#', txt)
 #         about = about.group(0) if about else None
 #         return about
-#     
+#
 # =============================================================================
 
 
@@ -110,27 +111,27 @@ def get_urls(filename):
     Return set of tuples: url_domain, complete_url
     Use group_tuple_pairs() to organize these for output to yaml etc.
     """
-    urls = [] 
+    urls = []
     try:
         with open(filename, 'r', encoding='utf8') as f:
             for line in f:
                 if ('http' in line):
-                    # get url between delimiters 
+                    # get url between delimiters
                     sa = line.split(']')
                     for s in sa:
                         # handle markup and other garbage in README.MD files that break the regex
                         s = re.sub('\?|\!|\;|\]|\[|\*', '', s)
                         regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-                        url = re.findall(regex,s)       
+                        url = re.findall(regex,s)
                         if len(url) > 0:
-                            url = [x[0] for x in url][0]                        
+                            url = [x[0] for x in url][0]
                             # Report urls as key-value pair where 2nd level domain is key
-                            ext = tldextract.extract(url)   # parses url                         
-                            url = ('.'.join(ext[1:3]), url) # create 2nd level domain from ext object, add as first element in tuple(to use as key later)                     
-                            urls.append(url)     
+                            ext = tldextract.extract(url)   # parses url
+                            url = ('.'.join(ext[1:3]), url) # create 2nd level domain from ext object, add as first element in tuple(to use as key later)
+                            urls.append(url)
     except Exception as e:
         print('get urls error in ' + filename, e)
-        
+
     return urls
 
 
@@ -142,7 +143,7 @@ def group_tuple_pairs(list_of_tuples):
     """
     sorter = sorted(list_of_tuples, key=itemgetter(0))
     grouper = groupby(sorter, key=itemgetter(0))
-    
+
     return {k: list(map(itemgetter(1), v)) for k, v in grouper}
 
 
@@ -165,10 +166,10 @@ def replace_cp_in_tuple_set(in_set, cp):
     e.g. for source filenames paired with output file information.
     """
     out_list = []
-    for t in in_set:        
+    for t in in_set:
         new_t = (t[0].replace(cp,''),) + t[1:]
         out_list.append(new_t)
-        
+
     return sorted(out_list)
 
 
@@ -180,10 +181,10 @@ def textfile_contains(filename, marker):
         with open(filename, 'r', encoding='utf8') as file:
             text = file.read();
             if marker in text:
-                return True        
+                return True
     except Exception as e:
         print(e)
-        
+
     return False
 
 
@@ -205,7 +206,7 @@ def yaml_write_file(filename, yaml_dict):
     yaml.add_representer(str, yaml_repr_str, Dumper=yaml.SafeDumper)
     with open("dmx-%s.yaml" % (filename), 'w') as file:
         yaml.safe_dump(yaml_dict, file)
-    
+
 
 
 
