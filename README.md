@@ -80,4 +80,49 @@ Do not use --reload flag, since the app will download the repo to the api folder
 * https://github.com/mjpuma/FSC-WorldModelers 
 
 
-Note that Pythia is a highly abstracted Python version of the [DSSAT model](https://github.com/DSSAT/dssat-csm-os).
+Note that Pythia is a highly abstracted Python version of the [DSSAT model](https://github.com/DSSAT/dssat-csm-os). 
+
+
+
+## API Reference
+
+Default port for Docker is 80.
+Default port for Uvicorn is 8000.
+Examples given below assume the Uvicorn server is running at port 8000.
+
+#### Docs
+
+```http
+  GET /docs
+  e.g. http://127.0.0.1:8000/docs
+```
+
+#### Confirm the API is available:
+
+```http
+  GET /
+  e.g. http://127.0.0.1:8000/
+```
+
+Returns 
+```json 
+{"status":"running"}
+```
+
+#### Examine URL
+
+```http
+  GET /examine/${url}
+  e.g. http://127.0.0.1:8000/examine/?url=https://github.com/jataware/dummy-model.git
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `url`      | `string` | **Required**. URL of GitHub repo |
+
+Returns
+```
+yaml-formatted string
+```
+
+  
