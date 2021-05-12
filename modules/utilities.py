@@ -172,7 +172,7 @@ def get_output1(filename):
                 line_num = idx + 1
                 file_path = get_open_filepath(line)
 
-            elif 'write(' in line and file_path is not None:
+            elif ('write(' in line or 'safe_dump(' in line) and file_path is not None:
                 obj_name = line.split('(')[1].split(')')[0]
                 if obj_name in object_dict:
                     obj_name = object_dict[obj_name]
@@ -304,6 +304,10 @@ def textfile_contains(filename, marker):
 
     return False
 
+def yaml_dump(yaml_dict):
+    yaml.SafeDumper.org_represent_str = yaml.SafeDumper.represent_str
+    yaml.add_representer(str, yaml_repr_str, Dumper=yaml.SafeDumper)
+    return yaml.safe_dump(yaml_dict)
 
 def yaml_repr_str(dumper, data):
     """
@@ -317,17 +321,11 @@ def yaml_repr_str(dumper, data):
 def yaml_write_file(filename, yaml_dict):
     """
     Handler for writing yaml files controlling for multiline comments.
+    Returns filename
     """
     yaml.SafeDumper.org_represent_str = yaml.SafeDumper.represent_str
     # not sure if this representer should be added on every call, or just once per session.
     yaml.add_representer(str, yaml_repr_str, Dumper=yaml.SafeDumper)
+    filename = "dmx-%s.yaml" % (filename)
     with open("dmx-%s.yaml" % (filename), 'w') as file:
         yaml.safe_dump(yaml_dict, file)
-
-
-
-
-
-
-
-

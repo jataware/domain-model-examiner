@@ -12,14 +12,22 @@ The goal of this process is to perform machine reading over the model codebase i
 
 ## Installation
 
-Run:
+First, recommended installation is to create a new conda environment and then intall from requirements.txt:
 
 ```
+conda create --name=dmx python=3.8
+conda activate dmx
+conda install uvicorn
 pip install -r requirements.txt
 ```
 
-## Usage
+Docker Install and Run
+```
+docker build -t dmx .
+docker run -p 80:80 dmx
+```
 
+## Usage
 
 #### List command line options
 ```
@@ -53,7 +61,15 @@ This creates and deletes a tempory folder 'tmp'.
 
 The application produces a .yaml file with prefix 'dmx-' concatenated with the repo name. 
 
-### 
+## Running the API
+
+Run API:
+```
+uvicorn api:app
+http://127.0.0.1:8000/
+```
+Do not use --reload flag, since the app will download the repo to the api folder.
+
 
 ## Testing Repositories
 
@@ -64,5 +80,4 @@ The application produces a .yaml file with prefix 'dmx-' concatenated with the r
 * https://github.com/mjpuma/FSC-WorldModelers 
 
 
-Note that Pythia is a highly abstracted Python version of the [DSSAT model](https://github.com/DSSAT/dssat-csm-os). 
-
+Note that Pythia is a highly abstracted Python version of the [DSSAT model](https://github.com/DSSAT/dssat-csm-os).

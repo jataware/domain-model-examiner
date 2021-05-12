@@ -10,6 +10,6 @@ def report_dockerfile(filename):
     with open(filename) as f:
         for line in f:
             if 'ENTRYPOINT' in line:
-                print('\tDockerfile found with ENTRYPOINT:', filename)
-                print('\t\t', line.strip())
+                #print('\tDockerfile found with ENTRYPOINT:', filename)
+                #print('\t\t', line.strip())
                 return line.strip()

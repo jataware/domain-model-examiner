@@ -147,48 +147,23 @@ class RRepoMiner:
                     # file_names
                     data_files.update(util.get_filenames(full_filename))
 
-
-        print('\t', len(mainfiles), '.R files with commandArgs found:')
-
-        ## Remove common path from filenames and output.
+        # Remove common path from filenames and output.
         cp = util.commonprefix(mainfiles)
         mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
-        for f in mainfiles:
-            print('\t\t' + f)
 
         ## Report imports and model types.
         model_types = sorted(util.get_model_types_from_libraries(libraries, self.sep, 'R'))
-        print('\tmodel types:', model_types)
 
-        ## Report libraries.
+        ## Sort libraries.
         libraries = sorted(libraries)
-        print('\t', len(libraries), 'libraries found:')
-        print('\t\t', end='')
-        for l in libraries:
-            print(l, end=' ')
-        print()
 
-        ## Report output files, a set of tuples.
-        ## Remove common path from source files in output_files
+        # Remove common path from source files in output_files
         output_files = util.replace_cp_in_tuple_set(output_files, cp)
         # Reorganize output_files items in tuple as dict.
         output_files = util.reorg_output_files(output_files)
 
-        print('\t', len(output_files), 'output file(s) found:')
-        for i in output_files:
-            print('\t\t', i)
-        print()
-
-        ## Report urls.
-        print('\t', len(urls), 'url(s) found:')
-        for i in urls:
-            print('\t\t', i)
-        print()
-
-        ## Remove common path from readme and about (same as readme) filenames.
+        # Remove common path from readme and about (same as readme) filenames.
         readmes = util.replace_cp_in_dict_list(readmes, cp)
-
-        ## Append Yaml dictionary and write to file.
 
         # Call Git REST API to get owner info and About description.
         owner_info = repominer.extract_owner(self.repo_path)
@@ -204,6 +179,8 @@ class RRepoMiner:
         else:
             yaml_dict.append(docker)
 
+        # Append Yaml dictionary.
+
         yaml_dict.append(dict(model_types=model_types))
         yaml_dict.append(dict(libraries=libraries))
         yaml_dict.append(dict(main_files=mainfiles))
@@ -213,6 +190,4 @@ class RRepoMiner:
         yaml_dict.append(dict(readmes=readmes))
         yaml_dict.append(dict(comments=comments))
 
-        ## Write yaml file using utility to control newlines in comments.
-        util.yaml_write_file(os.path.basename(self.repo_name), yaml_dict)
-
+        self.yaml_dict = yaml_dict

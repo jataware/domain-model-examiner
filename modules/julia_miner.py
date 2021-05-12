@@ -126,41 +126,19 @@ class JuliaRepoMiner:
                     # file_names
                     data_files.update(util.get_filenames(full_filename))
 
-        # Report .jl files, Remove common path from filenames and output.
-        # print('\t', len(mainfiles), '.jl files with __main__ found:')
+
         cp = util.commonprefix(mainfiles)
-        # mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
-        # for f in mainfiles:
-        #    print('\t\t' + f)
 
         # Report imports and model types.
         model_types = sorted(util.get_model_types_from_libraries(imports, self.sep, 'Julia'))
-        print('\tmodel types:', model_types)
 
         imports = sorted(imports)
-        print('\t', len(imports), 'import(s) found:')
-        print('\t\t', end='')
-        for i in imports:
-            print(i, end=' ')
-        print()
 
         # Report output files, a set of tuples.
         # Remove common path from source files in output_files
         output_files = util.replace_cp_in_tuple_set(output_files, cp)
         # Reorganize output_files items in tuple as dict.
         output_files = util.reorg_output_files(output_files)
-
-        print('\t', len(output_files), 'output file(s) found:')
-        for i in output_files:
-            print('\t\t', i)
-        print()
-
-        # Report urls.
-        # urls = sorted(urls)
-        print('\t', len(urls), 'url(s) found:')
-        for i in urls:
-            print('\t\t', i)
-        print()
 
         # Remove common path from readme filenames.
         readmes = util.replace_cp_in_dict_list(readmes, cp)
@@ -186,5 +164,4 @@ class JuliaRepoMiner:
         yaml_dict.append(dict(readmes=readmes))
         yaml_dict.append(dict(comments=comments))
 
-        # Write yaml file using utility to control newlines in comments.
-        util.yaml_write_file(os.path.basename(self.repo_name), yaml_dict)
+        self.yaml_dict = yaml_dict

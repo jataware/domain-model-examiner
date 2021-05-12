@@ -45,6 +45,7 @@ import modules.language as language
 import modules.python_miner as pyminer
 import modules.r_miner as rminer
 import modules.repo_miner as repo_miner
+import modules.utilities as util
 
 
 def main():
@@ -71,20 +72,23 @@ def main():
 
     if url is not None:
         try:
-
+            yaml_dict = {}
             repo_miner.clone_repo(url)
             repo_name = os.path.splitext(os.path.basename(url))[0]
 
             lang = language.detect_language('tmp')
 
             if (lang == '.py'):
-                pyminer.PyRepoMiner('tmp', repo_name)
+                yaml_dict = pyminer.PyRepoMiner('tmp', repo_name).yaml_dict
             elif (lang == '.R'):
-                rminer.RRepoMiner('tmp', repo_name)
+                yaml_dict = rminer.RRepoMiner('tmp', repo_name).yaml_dict
+            elif (lang == '.jl'):
+                yaml_dict = julieminer.JuliaRepoMiner('tmp', repo_name).yaml_dict
             else:
-                arbminer.ArbitraryRepoMiner('tmp', repo_name, lang)
+                yaml_dict = arbminer.ArbitraryRepoMiner('tmp', repo_name, lang).yaml_dict
 
-            print()
+            # Write yaml file using utility to control newlines in comments.
+            util.yaml_write_file(repo_name, yaml_dict)
 
             repo_miner.delete_repo()
 
@@ -92,19 +96,22 @@ def main():
             print(e)
     else:
         for repo in repos:
-
+            yaml_dict = {}
             lang = language.detect_language(repo)
+            repo_name = os.path.basename(repo)
 
             if (lang == '.py'):
-                pyminer.PyRepoMiner(repo, os.path.basename(repo))
+                 yaml_dict = pyminer.PyRepoMiner(repo, repo_name).yaml_dict
             elif (lang == '.R'):
-                rminer.RRepoMiner(repo, os.path.basename(repo))
+                 yaml_dict = rminer.RRepoMiner(repo, repo_name).yaml_dict
             elif (lang == '.jl'):
-                julieminer.JuliaRepoMiner(repo, os.path.basename(repo))
+                 yaml_dict = julieminer.JuliaRepoMiner(repo, repo_name).yaml_dict
             else:
-                arbminer.ArbitraryRepoMiner(repo, os.path.basename(repo), lang)
+                 yaml_dict = arbminer.ArbitraryRepoMiner(repo, repo_name, lang).yaml_dict
 
-            print()
+            # Write yaml file using utility to control newlines in comments.
+            print(repo_name)
+            util.yaml_write_file(repo_name, yaml_dict)
 
 
 if __name__ == "__main__":
