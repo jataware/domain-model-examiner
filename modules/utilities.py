@@ -25,7 +25,7 @@ def commonprefix(args, sep="\\"):
 
 def get_comments(filename):
     """
-    Get Python and R comments.
+    Get Julia, Python, R comments.
     """
 
     comments = []
@@ -53,7 +53,6 @@ def get_filenames(filename):
     except Exception as e:
         print(e)
         return []
-
 
 
 def get_model_types_from_libraries(imports, self_sep, language_name):
@@ -88,23 +87,129 @@ def get_model_types_from_libraries(imports, self_sep, language_name):
 
 
 
+def get_output1(filename):
+    """
+    Supports Python, Julia
+    Return set of tuples: source_file, output_file
+    Use group_tuple_pairs() to organize these for output to yaml etc.
 
-# =============================================================================
-# def get_readme_about(filename):
-#     """
-#     Extract the About, here defined as the first, section of Github repo readmes
-#     so that it may be provided as a model description.
-#
-#     filename: Readme.MD usually
-#     """
-#     with open(filename, 'r', encoding="utf8") as f:
-#         txt = f.read()
-#         about =  re.search('#([^#]*)#', txt)
-#         about = about.group(0) if about else None
-#         return about
-#
-# =============================================================================
+    Cases:
 
+    (1)
+    writer(open())
+    writer.writerows(object)
+
+    (2) with open()
+            write
+
+        example from pythia:
+        def compose_peerless(context, config, env):
+            print(".", end="", flush=True)
+            this_output_dir = context["contextWorkDir"]
+            symlink_wth_soil(this_output_dir, config, context)
+            xfile = pythia.template.render_template(env, context["template"], context)
+            with open(os.path.join(context["contextWorkDir"], context["template"]), "w") as f:
+                f.write(xfile)
+            return context["contextWorkDir"]
+
+    (3)
+    file = open()
+    write...
+    close()
+    """
+
+    def get_open_filepath(line):
+
+        quoted_stuff = re.findall(r"['\"](.*?)['\"]", line) # single and double quotes
+        if quoted_stuff:
+            # remove a or w directives from list
+            for s in ['a', 'w']:
+                if s in quoted_stuff:
+                    quoted_stuff.remove(s)
+            if quoted_stuff is None:
+                # e.g.: with open(output_csv, 'w') as csv_file:
+                obj_name = line.split('(')[0].split(',')[0]
+                if obj_name in object_dict:
+                    obj_name = object_dict[obj_name]
+                return obj_name
+            else:
+                return ' '.join(quoted_stuff)
+        else:
+            try:
+                return line.split('(')[1].split(',')[0]
+            except:
+                return ''
+
+    object_dict = {}  # dict of objects defined in file
+    output_files = []
+    with open(filename, 'rt', encoding='utf8') as file:
+        lines = file.read().splitlines()
+        line_num = None  # store line with open()
+        file_path = None
+
+        for idx, line in enumerate(lines):
+            line = line.strip()
+            # ignore comment lines and remove inline comments
+            if (line.startswith('#')):
+                continue
+            line = line.split('#')[0].strip()
+
+            if line.count('=') == 1:
+                # Parse simple assignment lines
+                # e.g. xfile = pythia.template.render_template(env, context["template"], context)
+                sa = line.split('=')
+                object_dict[sa[0].strip()] = sa[1].strip()
+
+            elif '.open(' in line:
+                # Handle single line write e.g. csv.writer(open())
+                line_num = idx + 1
+                file_path = get_open_filepath(line)
+
+            ## Handle with open() block
+            elif ('with open(' in line):
+                #t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filepath(line)))
+                #with_open = True
+                line_num = idx + 1
+                file_path = get_open_filepath(line)
+
+            elif 'write(' in line and file_path is not None:
+                obj_name = line.split('(')[1].split(')')[0]
+                if obj_name in object_dict:
+                    obj_name = object_dict[obj_name]
+
+
+                #output_dict = dict(line = line_num, path = file_path, write = obj_name)
+                output_files.append((filename, line_num, file_path, obj_name))
+                file_path = None
+
+
+    return output_files
+
+
+def get_output2(filename):
+    """
+    Supports R
+    Return set of tuples: source_file, output_file
+    Use group_tuple_pairs() to organize these for output to yaml etc.
+
+    """
+    output_files = []
+    with open(filename, 'rt', encoding='utf8') as file:
+        for idx, line in enumerate(file):
+            if ('write' in line and '(' in line):
+                # write.csv(Gstrength_in_df,paste0("COVID-19_data/data_network/", runname[1],"Gstrength_in_", unitname, ".csv"), row.names = FALSE)
+                #
+                sa = line.split(',')
+
+                # handle first split, which should include the outputed object; its name should be informative
+                object_name = sa[0].split('(')[1]
+
+                # collect everything remaining in quotations.
+                quoted_stuff = re.findall('"([^"]*)"', line)
+
+                # t = (filename, "ln {0:>4}: obj: {1}; partial path: {2}".format(idx+1, object_name, ''.join(quoted_stuff)))
+                output_files.append((filename, idx+1, ''.join(quoted_stuff), object_name))
+    return output_files
 
 def get_urls(filename):
     """
@@ -171,6 +276,18 @@ def replace_cp_in_tuple_set(in_set, cp):
         out_list.append(new_t)
 
     return sorted(out_list)
+
+
+def reorg_output_files(output_files):
+    """
+    assumes output_files is a list or set of tuples:
+    (filename, line, path, write_object)
+    reorganize into a tuple (filename, [dict of last 3 items])
+    """
+    for i in range(0, len(output_files)):
+        t = output_files[i]
+        output_files[i] = (t[0],) + (dict(line=t[1], path=t[2], write=t[3]),)
+    return output_files
 
 
 def textfile_contains(filename, marker):

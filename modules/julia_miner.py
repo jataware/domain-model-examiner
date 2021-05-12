@@ -5,7 +5,6 @@ import os
 import modules.utilities as util
 import modules.docker_miner as dminer
 import modules.repo_miner as repominer
-import re
 
 
 class JuliaRepoMiner:
@@ -57,75 +56,6 @@ class JuliaRepoMiner:
                         imports.update(sa)
         return imports
 
-    def get_output(self, filename):
-        """
-        Julia-specific (looks a lot like Python)
-
-        Return set of tuples: source_file, output_file
-        Use group_tuple_pairs() to organize these for output to yaml etc.
-
-        Cases:
-
-        (1)
-        writer(open())
-
-
-        (2)
-        with open(
-                write...
-
-        (3)
-        file = open()
-        write...
-        close()
-        """
-        def get_open_filename(line):
-            quoted_stuff = re.search('"([^"]*)"', line)
-            if quoted_stuff:
-                return quoted_stuff.group(0)
-            else:
-                try:
-                    return line.split('(')[1].split(',')[0]
-                except Exception:
-                    return ''
-
-        output_files = []
-        with open(filename, 'rt', encoding='utf8') as file:
-            lines = file.read().splitlines()  # read into a list to allow backtracking
-
-            open_file = False
-            with_open = False
-            t = ()
-            for idx, line in enumerate(lines):
-                # Handle single line write e.g. csv.writer(open())
-                if ('write' in line and 'open(' in line):
-                    t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
-                    output_files.append(t)
-
-                # Handle with open() block
-                elif ('with open(' in line and not with_open):
-                    t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
-                    with_open = True
-                elif (with_open and 'write(' in line):
-                    output_files.append(t)
-                    with_open = False
-
-                # Handle assignment of file handle with open()
-                # e.g.
-                # file = open()
-                # write...
-                # close
-                elif ('open(' in line and not open_file):
-                    t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
-                elif (open_file or with_open) and '.read' in line:
-                    open_file = False
-                    with_open = False
-                elif (open_file and 'close(' in line):
-                    # closing an openfile used for writing
-                    output_files.append(t)
-                    open_file = False
-
-        return output_files
 
     def mine_files(self):
         # Probably move to another unit/class.
@@ -164,7 +94,7 @@ class JuliaRepoMiner:
                         imports.update(self.get_imports(full_filename, root_dirs))
 
                     # output files
-                    temp_list = self.get_output(full_filename)
+                    temp_list = util.get_output1(full_filename)
                     if temp_list:
                         output_files.update(temp_list)
 
@@ -196,7 +126,7 @@ class JuliaRepoMiner:
                     # file_names
                     data_files.update(util.get_filenames(full_filename))
 
-        # Report .py files, Remove common path from filenames and output.
+        # Report .jl files, Remove common path from filenames and output.
         # print('\t', len(mainfiles), '.jl files with __main__ found:')
         cp = util.commonprefix(mainfiles)
         # mainfiles = list(map(lambda s: s.replace(cp,''), mainfiles ))
@@ -217,6 +147,9 @@ class JuliaRepoMiner:
         # Report output files, a set of tuples.
         # Remove common path from source files in output_files
         output_files = util.replace_cp_in_tuple_set(output_files, cp)
+        # Reorganize output_files items in tuple as dict.
+        output_files = util.reorg_output_files(output_files)
+
         print('\t', len(output_files), 'output file(s) found:')
         for i in output_files:
             print('\t\t', i)

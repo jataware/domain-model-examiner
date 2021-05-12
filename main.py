@@ -92,6 +92,7 @@ def main():
             print(e)
     else:
         for repo in repos:
+
             lang = language.detect_language(repo)
 
             if (lang == '.py'):

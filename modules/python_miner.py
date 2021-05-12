@@ -9,7 +9,6 @@ import os
 import modules.utilities as util
 import modules.docker_miner as dminer
 import modules.repo_miner as repominer
-import re
 
 class PyRepoMiner:
     """
@@ -45,9 +44,14 @@ class PyRepoMiner:
         imports = set()
         with open(filename, 'r', encoding="utf8") as f:
             for line in f:
-                line = line.split('#')[0].strip() # remove inline comments
+                line = line.strip()
 
-                if line.startswith('import') and ',' in line and 'as' in line:
+                # ignore comment lines and remove inline comments
+                if (line.startswith('#')):
+                    continue
+                line = line.split('#')[0].strip()
+
+                if line.startswith('import ') and ',' in line and 'as' in line:
                     # e.g. import argparse as ap, json as js, os as opsys
                     line = line.replace('import', '').replace('as','')
                     sa = line.split(',') # break in to library and alias pairs
@@ -55,7 +59,7 @@ class PyRepoMiner:
                         lib = s.split()[0].strip()
                         if not lib.startswith(root_dirs):
                             imports.add(s.split()[0].strip()) # add library name
-                elif line.startswith('import') and ',' in line:
+                elif line.startswith('import ') and ',' in line:
                     # e.g. import argparse, json, os
                     line = line.replace('import', '')
                     sa = line.split(',')
@@ -64,14 +68,13 @@ class PyRepoMiner:
                         if not lib.startswith(root_dirs):
                             imports.add(s.strip())
 
-                elif line.startswith('import'):
+                elif line.startswith('import '):
                     # e.g. import argparse
-                    #imports.add(line.split()[1].split('.')[0])
                     lib = line.split()[1]
                     if not lib.startswith(root_dirs):
                         imports.add(line.split()[1])
 
-                elif line.startswith('from') and 'import' in line:
+                elif line.startswith('from ') and 'import ' in line:
                     # eg from git import RemoteProgress, Repo
                     sa = line.split()
                     # iterate tokens in line after the "import"
@@ -82,75 +85,6 @@ class PyRepoMiner:
 
         return imports
 
-    def get_output(self, filename):
-        """
-        Python-specific
-        Return set of tuples: source_file, output_file
-        Use group_tuple_pairs() to organize these for output to yaml etc.
-
-        Cases:
-
-        (1)
-        writer(open())
-
-
-        (2)
-        with open(
-                write...
-
-        (3)
-        file = open()
-        write...
-        close()
-        """
-        def get_open_filename(line):
-            quoted_stuff = re.search('"([^"]*)"', line)
-            if quoted_stuff:
-                return quoted_stuff.group(0)
-            else:
-                try:
-                    return line.split('(')[1].split(',')[0]
-                except:
-                    return ''
-
-        output_files = []
-        with open(filename, 'rt', encoding='utf8') as file:
-            lines = file.read().splitlines() # read into a list to allow backtracking
-
-            open_file = False
-            with_open = False
-            t = ()
-            for idx, line in enumerate(lines):
-
-                ## Handle single line write e.g. csv.writer(open())
-                if ('write' in line and 'open(' in line):
-                    t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
-                    output_files.append(t)
-
-                ## Handle with open() block
-                elif ('with open(' in line and not with_open):
-                    t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
-                    with_open = True
-                elif (with_open and 'write(' in line):
-                    output_files.append(t)
-                    with_open = False
-
-                ## Handle assignment of file handle with open()
-                ## e.g.
-                ## file = open()
-                ## write...
-                ## close
-                elif ('open(' in line and not open_file):
-                    t = (filename, "ln {0:>4}: {1}".format(idx+1, get_open_filename(line)))
-                elif ( (open_file or with_open) and '.read' in line):
-                    open_file = False
-                    with_open = False
-                elif (open_file and 'close(' in line):
-                    # closing an openfile used for writing
-                    output_files.append(t)
-                    open_file = False
-
-        return output_files
 
     def mine_files(self):
         yaml_dict = [{'language' : 'Python'}]
@@ -186,7 +120,7 @@ class PyRepoMiner:
                         imports.update(self.get_imports(full_filename, root_dirs))
 
                     # output files
-                    temp_list = self.get_output(full_filename)
+                    temp_list = util.get_output1(full_filename)
                     if temp_list:
                         output_files.update(temp_list)
 
@@ -229,7 +163,6 @@ class PyRepoMiner:
         model_types = sorted(util.get_model_types_from_libraries(imports, self.sep, 'Python'))
         print('\tmodel types:', model_types)
 
-
         imports = sorted(imports)
         print('\t', len(imports), 'import(s) found:')
         print('\t\t', end='')
@@ -237,9 +170,12 @@ class PyRepoMiner:
             print(i, end=' ')
         print()
 
-        ## Report output files, a set of tuples.
-        ## Remove common path from source files in output_files
+        # Report output files, a set of tuples.
+        # Remove common path from source files in output_files
         output_files = util.replace_cp_in_tuple_set(output_files, cp)
+        # Reorganize output_files items in tuple as dict.
+        output_files = util.reorg_output_files(output_files)
+
         print('\t', len(output_files), 'output file(s) found:')
         for i in output_files:
             print('\t\t', i)

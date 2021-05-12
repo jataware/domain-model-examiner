@@ -88,35 +88,6 @@ class RRepoMiner:
         return libraries
 
 
-
-    def get_output(self, filename):
-        """
-        R-specific
-        Return set of tuples: source_file, output_file
-        Use group_tuple_pairs() to organize these for output to yaml etc.
-
-        """
-        output_files = []
-        with open(filename, 'rt', encoding='utf8') as file:
-            for idx, line in enumerate(file):
-                if ('write' in line and '(' in line):
-                    # write.csv(Gstrength_in_df,paste0("COVID-19_data/data_network/", runname[1],"Gstrength_in_", unitname, ".csv"), row.names = FALSE)
-                    #
-                    sa = line.split(',')
-
-                    # handle first split, which should include the outputed object; its name should be informative
-                    object_name = sa[0].split('(')[1]
-
-                    # collect everything remaining in quotations.
-                    quoted_stuff = re.findall('"([^"]*)"', line)
-
-                    t = (filename, "ln {0:>4}: obj: {1}; partial path: {2}".format(idx+1, object_name, ''.join(quoted_stuff)))
-
-                    output_files.append(t)
-        return output_files
-
-
-
     def mine_files(self):
         ## Probably move to another unit/class.
         ## Try to id the entry point file based on the identified language.
@@ -143,7 +114,7 @@ class RRepoMiner:
                     libraries.update(self.get_libraries(full_filename))
 
                     # output files
-                    temp_list = self.get_output(full_filename)
+                    temp_list = util.get_output2(full_filename)
                     if temp_list:
                         output_files.update(temp_list)
 
@@ -200,6 +171,9 @@ class RRepoMiner:
         ## Report output files, a set of tuples.
         ## Remove common path from source files in output_files
         output_files = util.replace_cp_in_tuple_set(output_files, cp)
+        # Reorganize output_files items in tuple as dict.
+        output_files = util.reorg_output_files(output_files)
+
         print('\t', len(output_files), 'output file(s) found:')
         for i in output_files:
             print('\t\t', i)
