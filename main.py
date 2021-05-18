@@ -72,23 +72,30 @@ def main():
 
     if url is not None:
         try:
-            yaml_dict = {}
+            yaml_dict_list = []
             repo_miner.clone_repo(url)
             repo_name = os.path.splitext(os.path.basename(url))[0]
 
+            # Call language-specific mining to append to yaml_dict_list
             lang = language.detect_language('tmp')
-
             if (lang == '.py'):
-                yaml_dict = pyminer.PyRepoMiner('tmp', repo_name).yaml_dict
+                yaml_dict_list = pyminer.PyRepoMiner('tmp', repo_name).yaml_dict
             elif (lang == '.R'):
-                yaml_dict = rminer.RRepoMiner('tmp', repo_name).yaml_dict
+                yaml_dict_list = rminer.RRepoMiner('tmp', repo_name).yaml_dict
             elif (lang == '.jl'):
-                yaml_dict = julieminer.JuliaRepoMiner('tmp', repo_name).yaml_dict
+                yaml_dict_list = julieminer.JuliaRepoMiner('tmp', repo_name).yaml_dict
             else:
-                yaml_dict = arbminer.ArbitraryRepoMiner('tmp', repo_name, lang).yaml_dict
+                yaml_dict_list = arbminer.ArbitraryRepoMiner('tmp', repo_name, lang).yaml_dict
+
+            # Call Repominer to get owner info and About descriptions.
+            owner_info = repo_miner.extract_owner(url, 'tmp')
+            yaml_dict_list.insert(1, dict(owner=owner_info))
+
+            about_desc = repo_miner.extract_about(url, 'tmp', repo_name)
+            yaml_dict_list.insert(2, dict(about=about_desc))
 
             # Write yaml file using utility to control newlines in comments.
-            util.yaml_write_file(repo_name, yaml_dict)
+            util.yaml_write_file(repo_name, yaml_dict_list)
 
             repo_miner.delete_repo()
 
@@ -96,22 +103,30 @@ def main():
             print(e)
     else:
         for repo in repos:
-            yaml_dict = {}
+            yaml_dict_list = []
             lang = language.detect_language(repo)
             repo_name = os.path.basename(repo)
 
             if (lang == '.py'):
-                 yaml_dict = pyminer.PyRepoMiner(repo, repo_name).yaml_dict
+                 yaml_dict_list = pyminer.PyRepoMiner(repo, repo_name).yaml_dict
             elif (lang == '.R'):
-                 yaml_dict = rminer.RRepoMiner(repo, repo_name).yaml_dict
+                 yaml_dict_list = rminer.RRepoMiner(repo, repo_name).yaml_dict
             elif (lang == '.jl'):
-                 yaml_dict = julieminer.JuliaRepoMiner(repo, repo_name).yaml_dict
+                 yaml_dict_list = julieminer.JuliaRepoMiner(repo, repo_name).yaml_dict
             else:
-                 yaml_dict = arbminer.ArbitraryRepoMiner(repo, repo_name, lang).yaml_dict
+                 yaml_dict_list = arbminer.ArbitraryRepoMiner(repo, repo_name, lang).yaml_dict
+
+            # Call Repominer to get owner info and About descriptions.
+            # Assumes these are GitHub repos for local repos.
+            owner_info = repo_miner.extract_owner(None, 'tmp')
+            yaml_dict_list.insert(1, dict(owner=owner_info))
+
+            about_desc = repo_miner.extract_about(None, 'tmp', repo_name)
+            yaml_dict_list.insert(2, dict(about=about_desc))
 
             # Write yaml file using utility to control newlines in comments.
             print(repo_name)
-            util.yaml_write_file(repo_name, yaml_dict)
+            util.yaml_write_file(repo_name, yaml_dict_list)
 
 
 if __name__ == "__main__":

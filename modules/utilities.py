@@ -327,5 +327,5 @@ def yaml_write_file(filename, yaml_dict):
     # not sure if this representer should be added on every call, or just once per session.
     yaml.add_representer(str, yaml_repr_str, Dumper=yaml.SafeDumper)
     filename = "dmx-%s.yaml" % (filename)
-    with open("dmx-%s.yaml" % (filename), 'w') as file:
+    with open(filename, 'w') as file:
         yaml.safe_dump(yaml_dict, file)

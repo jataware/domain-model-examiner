@@ -9,7 +9,6 @@ Miner for repos without a specific miner.
 import os
 import modules.utilities as util
 import modules.docker_miner as dminer
-import modules.repo_miner as repominer
 import modules.language as language
 
 IGNORE_FILE_EXT = ['.txt','.html','.css','.json','xml','.csv','.pdf','.yml','.yaml','.ini',
@@ -83,11 +82,11 @@ class ArbitraryRepoMiner:
         ## Append Yaml dictionary and write to file.
 
         # Call Git REST API to get owner info and About description.
-        owner_info = repominer.extract_owner(self.repo_path)
-        yaml_dict.append(dict(owner=owner_info))
+        #owner_info = repominer.extract_owner(self.repo_path)
+        #yaml_dict.append(dict(owner=owner_info))
 
-        about_desc = repominer.extract_about(self.repo_path, self.repo_name)
-        yaml_dict.append(dict(about=about_desc))
+        #about_desc = repominer.extract_about(self.repo_path, self.repo_name)
+        #yaml_dict.append(dict(about=about_desc))
 
         if docker is None:
             yaml_dict.append(dict(docker_entrypoint=None))
