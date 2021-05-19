@@ -11,7 +11,7 @@ install_requirements = read_requirements("requirements.txt")
 
 setup(
     author="Robnet Kerns",
-    author_email="brobnet@jataware.com",
+    author_email="robnet@jataware.com",
     python_requires=">=3.8",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
