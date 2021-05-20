@@ -1,0 +1,800 @@
+- language: R
+- owner:
+  - login: mjpuma
+  - repo_url: https://github.com/mjpuma/FSC-WorldModelers.git
+  - type: User
+  - name: Dr. Michael J. Puma
+  - company: null
+  - blog: https://mjpuma.github.io/FragileFood/
+  - location: New York City
+  - bio: Global food security, network science, hydro-climatology, migration
+- about: 'Food Shocks Cascade Model: A simple agent-based network model that computes
+    chain-reactions due to production anomalies based on dynamic food balance sheets
+    at the country level.'
+- about: null
+- docker_entrypoint: ENTRYPOINT ["Rscript", "/main/main.R"]
+- model_types:
+  - Network / Graph Analysis
+- libraries:
+  - dplyr
+  - ggraph
+  - igraph
+  - netrankr
+  - reshape2
+  - stringr
+  - tidyr
+  - tidyverse
+  - tnet
+- main_files:
+  - \main.R
+- data_files:
+  - BilateralExportMatrix_TimeSeries.csv
+  - ConsumptiontoC0_TimeSeries.csv
+  - Export_FinalTotalByCountry.csv
+  - Import_FinalTotalByCountry.csv
+  - NumberExportTradePartners_FinalTotalByCountry.csv
+  - NumberImportTradePartners_FinalTotalByCountry.csv
+  - Production_Crops_E_All_Data_(Normalized).zip
+  - Production_TimeSeries.csv
+  - ReserveChangetoC0_TimeSeries.csv
+  - Reserve_TimeSeries.csv
+  - Shortage_TimeSeries.csv
+  - Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip
+  - country_list195_2012to2016.csv
+  - cropcommodity_prodlist.csv
+  - cropcommodity_reserveslist.csv
+  - cropcommodity_tradelist.csv
+  - psd_grains_pulses_csv.zip
+- output_files:
+    \FSC_networkstats.R:
+    - line: 87
+      path: COVID-19_data/data_network/Exports_ACToday_.csv
+      write: ACToday_Exports_df
+    - line: 91
+      path: COVID-19_data/data_network/Imports_ACToday_.csv
+      write: ACToday_Imports_df
+    - line: 95
+      path: COVID-19_data/data_network/IASC_Exports_.csv
+      write: IASC_Exports_df
+    - line: 99
+      path: COVID-19_data/data_network/IASC_Imports_.csv
+      write: IASC_Imports_df
+    - line: 103
+      path: COVID-19_data/data_network/Gdeg_total_.csv
+      write: Gdeg_total_df
+    - line: 107
+      path: COVID-19_data/data_network/Gdeg_out_.csv
+      write: Gdeg_out_df
+    - line: 111
+      path: COVID-19_data/data_network/Gdeg_in_.csv
+      write: Gdeg_in_df
+    - line: 115
+      path: COVID-19_data/data_network/Gstrength_total_.csv
+      write: Gstrength_total_df
+    - line: 119
+      path: COVID-19_data/data_network/Gstrength_out_.csv
+      write: Gstrength_out_df
+    - line: 123
+      path: COVID-19_data/data_network/Gstrength_in_.csv
+      write: Gstrength_in_df
+    \FSC_networkstats_global.R:
+    - line: 63
+      path: COVID-19_data/data_network/GlobalMetrics/Gdeg_total_.csv
+      write: Gdeg_total_df
+    - line: 67
+      path: COVID-19_data/data_network/GlobalMetrics/Gdeg_out_.csv
+      write: Gdeg_out_df
+    - line: 71
+      path: COVID-19_data/data_network/GlobalMetrics/Gdeg_in_.csv
+      write: Gdeg_in_df
+    - line: 75
+      path: COVID-19_data/data_network/GlobalMetrics/Gstrength_total_.csv
+      write: Gstrength_total_df
+    - line: 79
+      path: COVID-19_data/data_network/GlobalMetrics/Gstrength_out_.csv
+      write: Gstrength_out_df
+    - line: 83
+      path: COVID-19_data/data_network/GlobalMetrics/Gstrength_in_.csv
+      write: Gstrength_in_df
+    - line: 87
+      path: COVID-19_data/data_network/GlobalMetrics/Gbtw_.csv
+      write: Gbtw_df
+    \ProcessInputs.R:
+    - line: 77
+      path: inputs_processed/E0.csv
+      write: Tkbyc
+    - line: 124
+      path: inputs_processed/Production.csv
+      write: Pkbyc
+    - line: 274
+      path: inputs_processed/Reserves.csv
+      write: Rkbyc
+    \main.R:
+    - line: 345
+      path: outputs/BilateralExportMatrix_TimeSeries.csv
+      write: Eout
+    - line: 348
+      path: outputs/Production_TimeSeries.csv
+      write: Pout_df
+    - line: 349
+      path: outputs/Reserve_TimeSeries.csv
+      write: Rout_df
+    - line: 350
+      path: outputs/Shortage_TimeSeries.csv
+      write: shortageout_df
+    - line: 351
+      path: outputs/ConsumptiontoC0_TimeSeries.csv
+      write: C1_C0out_df
+    - line: 352
+      path: outputs/ReserveChangetoC0_TimeSeries.csv
+      write: dR_C0out_df
+    - line: 355
+      path: outputs/Export_InitialTotalByCountry.csv
+      write: Gstrength_out_initial_df
+    - line: 356
+      path: outputs/Import_InitialTotalByCountry.csv
+      write: Gstrength_in_initial_df
+    - line: 357
+      path: outputs/NumberExportTradePartners_InitialTotalByCountry.csv
+      write: Gdeg_out_initial_df
+    - line: 358
+      path: outputs/NumberImportTradePartners_InitialTotalByCountry.csv
+      write: Gdeg_in_initial_df
+    - line: 360
+      path: outputs/Export_FinalTotalByCountry.csv
+      write: Gstrength_out_final_df
+    - line: 361
+      path: outputs/Import_FinalTotalByCountry.csv
+      write: Gstrength_in_final_df
+    - line: 362
+      path: outputs/NumberExportTradePartners_FinalTotalByCountry.csv
+      write: Gdeg_out_final_df
+    - line: 363
+      path: outputs/NumberImportTradePartners_FinalTotalByCountry.csv
+      write: Gdeg_in_final_df
+    \main_static.R:
+    - line: 275
+      path: outputs/data_network/ProductionStatic.csv
+      write: Pout_df
+    - line: 276
+      path: outputs/data_network/ReserveStatic.csv
+      write: Rout_df
+    - line: 277
+      path: outputs/data_network/ShortageStatic.csv
+      write: shortageout_df
+    - line: 278
+      path: outputs/data_network/C1C0Static.csv
+      write: C1_C0out_df
+    - line: 279
+      path: outputs/data_network/C2C0Static.csv
+      write: C2_C0out_df
+    - line: 280
+      path: outputs/data_network/ExportStatic.csv
+      write: Eout
+    - line: 283
+      path: outputs/data_network/ExportsFinal.csv
+      write: ExportsFinal
+    - line: 284
+      path: outputs/data_network/ExportsInitial.csv
+      write: ExportsInitial
+    - line: 285
+      path: outputs/data_network/ImportsFinal.csv
+      write: ImportsFinal
+    - line: 286
+      path: outputs/data_network/ImportsInitial.csv
+      write: ImportsInitial
+- urls:
+    fao.org:
+    - http://fenixservices.fao.org/faostat/static/bulkdownloads/Production_Crops_E_All_Data_(Normalized).zip
+    - http://www.fao.org/faostat/en/#data/QC
+    - http://fenixservices.fao.org/faostat/static/bulkdownloads/Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip
+    - http://www.fao.org/faostat/en/#data/TM
+    github.com:
+    - https://github.com/pmarchand1/cereals-network-shocks
+    kateto.net:
+    - https://kateto.net/networks-r-igraph
+    - https://kateto.net/netscix2016.html
+    r-bloggers.com:
+    - https://www.r-bloggers.com/network-centrality-in-r-an-introduction/
+    r-project.org:
+    - http://cran.us.r-project.org
+    usda.gov:
+    - https://apps.fas.usda.gov/psdonline/downloads/psd_grains_pulses_csv.zip
+    - https://apps.fas.usda.gov/psdonline/app/index.html#/app/downloads
+- readmes:
+  - tmp\README.md: "# Food Shocks Cascade Model\n- A simple agent-based network model\
+      \ that computes chain-reactions due to production anomalies based on dynamic\
+      \ food balance sheets at the country level.  The model is written in R.\n- Latest\
+      \ published version of the model described in Heslin, A., M.J. Puma, P. Marchand,\
+      \ J.A. Carr, J. Dell'Angelo, P. D'Odorico, J.A. Gephart, M. Kummu, M. Porkka,\
+      \ M.C. Rulli, D. Seekell, S. Suweis, and A. Tavoni, 2020: Simulating the cascading\
+      \ effects of an extreme agricultural production shock: Global implications of\
+      \ a contemporary US Dust Bowl event. Front. Sustain. Food Syst., 20 March 2020,\
+      \ doi:10.3389/fsufs.2020.00026.\n- Earlier model version is available at https://github.com/pmarchand1/cereals-network-shocks\
+      \ and described in the paper: Marchand, P., J.A. Carr, J. Dell'Angelo, M. Fader,\
+      \ J.A. Gephard, M. Kummu, N.R. Magliocca, M. Porkka, M.J. Puma, and Z. Ratajczak,\
+      \ 2016: Reserves and trade jointly determine exposure to food supply shocks.\
+      \ Environ. Res. Lett., 11, no. 9, 095009, doi:10.1088/1748-9326/11/9/095009.\n\
+      - Resolution: Food balances/inventories computed at some specified administrative\
+      \ level (e.g. country, province, etc) for a time interval (e.g., one year) that\
+      \ is long enough for a shock to propagate through the system.\n- Runtime: Preprossesing\
+      \ input data takes roughly 5 minutes; cascade simulations roughly a few minutes\
+      \ on desktop computer\n\n## How to setup and run the model\n### Step 1: Clone\
+      \ repository\nTo run a simulation, first clone this repository and navigate\
+      \ to the top-level directory with:\n```\ngit clone git@github.com:mjpuma/FSC-WorldModelers.git\n\
+      cd FSC-WorldModelers\n```\n\n### Step 2: Pull raw input files and place in \"\
+      inputs\" folder\n```\ncd inputs\nwget 'http://fenixservices.fao.org/faostat/static/bulkdownloads/Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip'\n\
+      wget 'http://fenixservices.fao.org/faostat/static/bulkdownloads/Production_Crops_E_All_Data_(Normalized).zip'\n\
+      wget 'https://apps.fas.usda.gov/psdonline/downloads/psd_grains_pulses_csv.zip'\n\
+      \nunzip 'Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip'\nunzip 'Production_Crops_E_All_Data_(Normalized).zip'\n\
+      unzip 'psd_grains_pulses_csv.zip'\n```\n\n### Step 3: Install the required R\
+      \ Packages\n```\nrscript main/Requirements.R\n```\n\n### Step 4: Prepare the\
+      \ input data\nAs part of the FSC model, we have a Scenario Library (see below),\
+      \ which includes a set of scenarios that have input data already processed and\
+      \ ancillary files already prepared.  If you want to run one of these scenarios,\
+      \ you can *skip over this step*.\n\nTo customize your own simulation, you need\
+      \ to modify \"ProcessInputs.R\" and create a file with the relevant production\
+      \ fractional-declines list by year by country.  See the file \"inputs/Scenario1_COVID_WheatDeclineFraction_1Year_195countries.csv\"\
+      as an example of a 1-year run and \"Scenario4_USDustBowl_WheatDeclineFraction_4Years_195countries.csv\"\
+      \ as an example of a 4-year run. Thus, you should add a scenario to \"Step 2\"\
+      \ of main.R.\n\nAlso, you need to specify the years for the baseline state of\
+      \ the food system (e.g., yr_range <- 2015:2017) as well as the 1)  list of countries\
+      \ included, 2)  set of crops commodities that will be aggregate for  bilateral\
+      \ trade data, 3)  set of crops commodities that will be aggregate for production\
+      \ data, and 4)  set of crops commodities that will be aggregate for reserves\
+      \ data.  \n\nThis files are as specified below:\n  1) country_list <- read.csv(\"\
+      ancillary/country_list195_2012to2016.csv\")\n  2) commodities<-read.csv(\"ancillary/cropcommodity_tradelist.csv\"\
+      )\n  3) commodities_prod<-read.csv(\"ancillary/cropcommodity_prodlist.csv\"\
+      )\n  4) commodities_reserves<-read.csv(\"ancillary/cropcommodity_reserveslist.csv\"\
+      )\n```\nrscript main/ProcessInputs.R\n```\n\n### Step 5: Run a simulation\n\
+      To run a simulation you need to specify 1) the version of the FSC, 2) select\
+      \ a scenario from the Scenario Library, and 3) specify the fraction of \"accessible\"\
+      \ existing reserves.\n\n* `FSCversion`:  Specify model version to run: 0-> Run\
+      \ Proportional Trade Allocation (PTA) version; \n                          \
+      \                    1-> Run Reserves-based Trade Allocation (RTA) version\n\
+      * `i_scenario`:  Select a simulation scenario from the Scenarios Library (See\
+      \ below).\n* `fractional_reserve_access`:   Parameter specifying fraction [0\
+      \ to 1] of \"accessible\" existing reserves \n\nYou can run a dynamic simulation\
+      \ with something like the following:\n```\nrscript main/main.R 0 1 0.5\n```\n\
+      In this case, we have chosen the following parameters:\n\n* `FSCversion`: 0\
+      \ -> PTA version of the FSC model\n* `i_scenario`: 1 -> A scenario for a decline\
+      \ in wheat production due to hypothetical COVID-19 and locust disruptions.\n\
+      * `fractional_reserve_access`: 0.5 (i.e., half of each nation's reserves are\
+      \ accessible to buffer shock)\n\n### Step 6: Output files\nThe model outputs\
+      \ are in CSV files.  There are three configurations for the output.  Below we\
+      \ describe the output variables and the three formats.\n\nType 1) Bilateral\
+      \ Export Matrices, where the row name is the origin country and the column is\
+      \ the destination. The first set of m columns is the first time step, the second\
+      \ set is the next time step and so forth. Units depend on ProcessInputs.R; typically\
+      \ kilocalories or metric tons. \n* BilateralExportMatrix_TimeSeries.csv\n\n\
+      Type 2) These files have four columns.  The first row is the title: iso3,\t\
+      Country Name (\"Country.x\"),\tYear,\tValue. The values for each individual\
+      \ file are production, reserves, or food shortage (demand-supply) as indicated\
+      \ by the file name. These files have units consistent with the Bilateral Export\
+      \ Matrices.  \n* Production_TimeSeries.csv\n* Reserve_TimeSeries.csv\n* Shortage_TimeSeries.csv\n\
+      \nThere are also two files that are unitless (i.e. normalized).  The first is\
+      \ the ratio of consumption to initial consumption and the second is the change\
+      \ in reserves relative to initial consumption.\n* ConsumptiontoC0_TimeSeries.csv\n\
+      * ReserveChangetoC0_TimeSeries.csv\n\nType 3: These files have network metrics\
+      \ computed from BilateralExportMatrix_TimeSeries.csv.  One set of files has\
+      \ the values from the start of the simulation and the other set has the file\
+      \ values.  The first row is the title.  \n\nThe set of initial value files are:\n\
+      * Export_InitialTotalByCountry.csv: units consistent with export matrices.\n\
+      * Import_InitialTotalByCountry.csv: units consistent with export matrices.\n\
+      * NumberExportTradePartners_InitialTotalByCountry.csv: number of partners\n\
+      * NumberImportTradePartners_InitialTotalByCountry.csv: number of partners\n\n\
+      And the final value files:\n* Export_FinalTotalByCountry.csv\n* Import_FinalTotalByCountry.csv\n\
+      * NumberExportTradePartners_FinalTotalByCountry.csv\nNumberImportTradePartners_FinalTotalByCountry.csv\n\
+      \n## Summary of Model Scripts\n### main.R\nThis is the main script for running\
+      \ the *dynamic* FSC from the command line including time loop and reading of\
+      \ processed inputs and saving of outputs.\n\n### main_static.R\nThis is the\
+      \ main script for running the *static* FSC from the command line.  This script\
+      \ simply computes changes in supply by country due to production decline anomalies\
+      \ (as a country list).\n\n### ProcessInputs.R\nCreates trade, production, and\
+      \ reserves matrices for use in the FSC model. \nRequires existing files in *ancillary*\
+      \ and *inputs* directory.  Processed inputs are saved and subsequently accessed\
+      \ by main.R or main_static.R in a separate folder called *inputs_processed*\n\
+      \n#### Ancillary files\nCommodity list, country list, conversion factors from\
+      \ commodity mass to common units (e.g. kcal, protein, US dollars):\n- country_list195_2012to2016.csv\
+      \ = FAO country code, iso3 abbreviation, and full country names\n- cropcommodity_tradelist.csv\
+      \ = Commodity list for *bilateral trade* with kcal conversions\n- cropcommodity_prodlist.csv\
+      \ = Commodity list for *production* with kcal conversions\n- cropcommodity_reserveslist.csv\
+      \ = Commodity list for *reserves* with kcal conversions\n\n#### Input files\n\
+      Bilateral trade of commodities at country level, production/consumption/storage\
+      \ for all countries, and production declines:\n- Production *fractional declines*\
+      \ list by year by country. List depends on ancillary country list file. anomalies\
+      \ <- read.csv(paste0(\"inputs/Prod\", name_crop, \"_DeclineFraction_195countries.csv\"\
+      ))\n- Trade data from FAOSTAT, detailed trail matrix, normalized, all data.\
+      \ The trade matrix is available here - http://www.fao.org/faostat/en/#data/TM\
+      \ - on the right side bar under \"Bulk Downloads\", select \"All Data Normalized\"\
+      .   *trade_dat <- read.csv(\"Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv\"\
+      *\n- Production data from FAOSTAT, production quantity in tonnes. The crop production\
+      \ data are available at: http://www.fao.org/faostat/en/#data/QC. *prod_dat<-read.csv(\"\
+      productiondataFAOSTAT.csv\")*\n- Reserves data from USDA, downloadable dataset\
+      \ - psd grains pulses. The stocks data are available here - https://apps.fas.usda.gov/psdonline/app/index.html#/app/downloads\
+      \ - listed as \"Grains\" the file is called \"psd_grains_pulses_csv.zip\". *psd\
+      \ <- read.csv(\"psd_grains_pulses.csv\")*\n\n#### Processed input files\n- Export\
+      \ Matrix ordered by FAOSTAT country code (increasing). *load(\"inputs_processed/E0.RData\"\
+      )*\n- Production. *load(\"inputs_processed/P0.Rdata\")* \n- Reserves. (a.k.a.\
+      \ Stocks) *load(\"inputs_processed/R0.RData\")*\n\n### FSC_sim_funcs.R\nMain\
+      \ iteration loop to implement FSC Model \n\n### FSC_component_funcs.R\nFunctions\
+      \ for the FSC model\n\n\n## Scenario Library\n#### Scenario 1:  COVID-19 + locust\
+      \ disruption to wheat\nA scenario for a hypothetical COVID-19 + locust disruption\
+      \ to the global wheat trade network (baseline: 2015 to 2017) for the year 2020.\
+      \  This is a one-year simulation.  \n\nThe production decline fractions are:\
+      \ \n```\n    Kenya:\t0.4916\n    Saudi Arabia:\t0.4483\n    Yemen:\t0.2335\n\
+      \    Ukraine:\t0.205\n    Kazakhstan:\t0.1818\n    Iran:\t0.1024\n    Pakistan:\t\
+      0.0976\n    Ethiopia:\t0.0874\n    Russia:\t0.0768\n```\n\n#### Scenario 2:\
+      \  COVID-19 + locust disruption to maize\nA scenario for a hypothetical COVID-19\
+      \ + locust disruption to the global maize trade network (baseline: 2015 to 2017)\
+      \ for the year 2020.  This is a one-year simulation.  \n\nThe production decline\
+      \ fractions are:\n```\n    Saudi Arabia\t0.5281\n    Somalia\t \t0.4844\n  \
+      \  Iran\t0.2975\n    Yemen\t0.2518\n    Kenya\t0.1521\n    Brazil\t0.1328\n\
+      \    Ethiopia\t0.1301\n    Argentina\t0.119\n    Ukraine\t0.0878\n    Pakistan\t\
+      0.0717\n```\n  \n#### Scenario 3:  COVID-19 + locust disruption to rice\nA scenario\
+      \ for a hypothetical COVID-19 + locust disruption to the global rice trade network\
+      \ (baseline: 2015 to 2017) for the year 2020.  This is a one-year simulation.\
+      \  \n\nThe production decline fractions are:\n```\n    Kenya\t0.3425\n    Pakistan\t\
+      0.197\n    Iran\t0.1883\n    Thailand\t0.021\n    India\t0.0192\n    Viet Nam\t\
+      0.0012\n```\n  \n#### Scenario 4:  US Dust Bowl disruption to wheat\nA scenario\
+      \ for a hypothetical US Dust Bowl analogue event to the global wheat trade network\
+      \ (baseline: 2015 to 2017) for the year 2020.  This is a four-year simulation.\
+      \  The production decline fractions are: \n\n    USA: 0.33\t0.36\t0.24\t0.24\
+      \ (for years 1 to 4, respectively)\n"
+- comments:
+  - FSC_component_funcs.R:
+    - ln1: '## Functions for the Food Shocks Cascade (FSC) model'
+    - ln3: '# Calculate net supply (P + I - E - dR) for each country in a food_net
+        object'
+    - ln8: '# Update shortage values in food_net object'
+    - ln11: "# Checks if any country gets additional supply (negative shortage) \n\
+        #  which would suggest error in model"
+    - ln17: '# Absorb any shortage less than a fraction eps of consumption (by country)'
+    - ln24: '# Draw from reserves (per country) based on need and available reserves'
+    - ln31: '# Cut consumption by given amount (by country)'
+    - ln37: |-
+        # Reallocate trade for countries based on additional supply needed (need)
+        # - Countries with need decrease exports and increase imports by the same proportion
+        #   across all existing trade links
+        # - exp_freeze is a condition to freeze exports (i.e. refuse requests to increase exports)
+        #   (by default, countries with no reserves cannot export more)
+    - ln44: '# Determine available trade volume and proportional change factor'
+    - ln48: |-
+        # Apply proportion to all links (except incoming links that froze exports)
+        # Calculate prop_dE[i,j] = (!exp_freeze[i]) * prop_dT[j] - prop_dT[i]
+    - ln57: |-
+        # Reduce exports for all countries based on additional supply needed (need),
+        #  applying the same proportional reduction to all outbound links
+    - ln60: '# Determine proportion of exports to reduce'
+    - ln64: '# Apply proportion to all links'
+    - ln69: |-
+        # Increase imports based on amount needed by importers and amount available from exporters
+        #   Iteratively distribute available amounts proportionally to existing trade
+        #   with partners needing more
+    - ln76: '# E matrix with only importers who need more'
+    - ln78: '# Distribute available amount proportionally to existing trade'
+    - ln81: '# When total offer greater than importer''s need, reduce all offers proportionally'
+    - ln84: '# If no change in trade, exit loop'
+    - ln86: '# Update need, avail and total dE'
+    - ln95: |-
+        # Dignostic: This function takes the output of sim_cascade (or sim_1c)
+        #  and tests whether it respects equation: S = P + I - E = R + C
+    - ln102: |-
+        # Test 1: Total dR + dC must match initial shock
+        # (within relative difference of tol)
+    - ln109: |-
+        # Test 2: After initial shock, dI - dE = dR + dC by country
+        # (within relative difference of tol * final net supply)
+  - FSC_networkstats.R:
+    - ln1: '## Compute Network statistics for Food Shock Cascade (FSC) Model'
+    - ln3: |-
+        ## Compute network statistics on export matrix ----
+        #    https://www.r-bloggers.com/network-centrality-in-r-an-introduction/
+        #    https://kateto.net/networks-r-igraph
+        #    https://kateto.net/netscix2016.html
+    - ln12: '# for clustering analysis'
+    - ln14: '# RStudio version: Specify arguments  ===='
+    - ln21: |-
+        #runname <- c('Rice_Avg20152017')
+        #runname <- c('Maize_Avg20152017')
+    - ln27: '#list actoday country'
+    - ln34: '#dim(Ematrix)[3]'
+    - ln37: '# Initialize  output vectors ===='
+    - ln43: |-
+        #for (i in 1:num_yrs) {
+        #   Extract 2D arrays
+    - ln49: '# Node degrees'
+    - ln64: '# Subset: Columbia World Project: ACToday'
+    - ln71: '# Subset: Inter-Agency Standing Committee'
+    - ln78: '## Add column names to output files'
+    - ln79: '#c(''Yr 0'', ''Yr 1'', ''Yr 2'', ''Yr 3'', ''Yr 4'')'
+    - ln80: |-
+        #colnames(Gdeg_total)  <- column_names
+        #colnames(Gdeg_out)  <- column_names
+    - ln83: |-
+        ## Save as CSV
+        # Subset countries
+    - ln125: '# Plots'
+    - ln135: '#trade openness;modeled, value density fraction'
+  - FSC_networkstats_global.R:
+    - ln1: '## Compute Network statistics for Food Shock Cascade (FSC) Model'
+    - ln3: |-
+        ## Compute network statistics on export matrix ----
+        #    https://www.r-bloggers.com/network-centrality-in-r-an-introduction/
+        #    https://kateto.net/networks-r-igraph
+        #    https://kateto.net/netscix2016.html
+    - ln13: '# RStudio version: Specify arguments  ===='
+    - ln19: |-
+        #runname <- c('Wheat_Avg20152017')
+        #runname <- c('Rice_Avg20152017')
+    - ln24: '#Export Matrix ordered by FAOSTAT country code (increasing)'
+    - ln28: |-
+        #for (i in 1:num_yrs) {
+        #   Extract 2D arrays
+        #i=1
+        #G  <- Ematrix[, , i]
+    - ln35: '#dim(G)[3]'
+    - ln39: '# Node degrees'
+    - ln55: '## Add column names to output files'
+    - ln56: '#c(''Yr 0'', ''Yr 1'', ''Yr 2'', ''Yr 3'', ''Yr 4'')'
+    - ln57: |-
+        #colnames(Gdeg_total)  <- column_names
+        #colnames(Gdeg_out)  <- column_names
+    - ln60: '## Save as CSV'
+    - ln91: '# Plots'
+  - FSC_network_funcs.R:
+    - ln1: '## Functions to compute network statistics for food'
+    - ln3: '# https://www.r-bloggers.com/network-centrality-in-r-an-introduction/'
+  - FSC_sim_funcs.R:
+    - ln1: '# Main simulation loop to implement Food Shock Cascade (FSC) Model ----'
+    - ln3: |-
+        ## Simulation with the Proportional Trade Allocation (PTA) version ====
+        #  dP: vector of initial change in production (must be negative) by country
+        #  rfrac: fraction of actual reserves to use
+        #  cfrac: fraction of shortage absorbed by domestic production before modifying trade
+        #  kmax: maximum number of iterations
+    - ln15: '# Initial shock and available reserves'
+    - ln20: '# Iterating'
+    - ln22: '# Update progress in time loop'
+    - ln24: '# Sequence of steps for each iteration'
+    - ln30: '# Stop if trade matrix is same from previous iteration'
+    - ln39: '# Final update of consumption to match supply'
+    - ln44: |-
+        ## Simulation with the Reserves-based Trade Allocation version ====
+        #  (first reduce exports, then incrase imports based on exporters' available reserves)
+        #  dP: vector of initial change in production (must be negative) by country
+        #  rfrac: fraction of actual reserves to use
+        #  rexp: fraction of useable reserves available to increase exports at each iteration
+        #  cfrac: fraction of shortage absorbed by domestic production before modifying trade
+        #  kmax: maximum number of iterations
+    - ln59: '# Initial shock and available reserves'
+    - ln64: '# Iterating'
+    - ln66: '# Update progress in time loop'
+    - ln68: '# Sequence of steps for each iteration'
+    - ln78: '# Stop if trade matrix is same from previous iteration'
+    - ln87: '# Final update of consumption to match supply'
+  - main.R:
+    - ln1: '## Main script for the Food Shock Cascade (FSC) Model'
+    - ln3: '# Step 0: Load required libraries and functions ----'
+    - ln11: '# Create output directory if needed'
+    - ln16: |-
+        # Step 1: Input Arguments ---
+        #  Command line version: e.g., "rscript main/main.R 0 1 0.5"
+        # Parse arguments ====
+    - ln20: |-
+        # PTA or RTA version of the Food Shock Cascade Model
+        # Scenario from the FSC Scenario Library
+        # Parameter specifying fraction of "accessible" existing reserves
+    - ln24: "# #  RStudio or similar integrated development environment (IDE)\n# #\
+        \  Specify arguments  ====\n# # Specify working directory\n# setwd(\"~/GitHub_mjpuma/FSC-WorldModelers/\"\
+        )\n# # Specify model version to run: 0-> PTA; 1-> RTA\n# FSCversion = 1\n\
+        # # Scenario from the FSC Scenario Library\n# i_scenario = 1\n#  #Specify\
+        \ fraction of actual reserves to use (fractional_reserve_access = rfrac) \n\
+        # fractional_reserve_access = 0.5\n# # End Specify arguments  ===="
+    - ln36: |-
+        # Step 2: Selection of simulation scenario ----
+        #   Production *fractional declines* list by year by country ====
+        #   Read production declines and specify number of consecutive simulation years
+        #  Index based on iso3 alphabetical ordering
+    - ln44: '# Specify number of years to run model'
+    - ln51: '# Specify number of years to run model'
+    - ln58: '# Specify number of years to run model'
+    - ln65: '# Specify number of years to run model'
+    - ln69: '# Create year range to run model along with column names for output'
+    - ln70: '# vector includes initial year'
+    - ln73: '# Format column names'
+    - ln84: '#Production decline fractions (positive values=> decline; negative values
+        => increase)'
+    - ln88: |-
+        # Step 3: Load ancillary data ----
+        # i) Commodity list for bilateral trade
+    - ln91: '# ii) Load country list'
+    - ln93: '# Order by iso3 code'
+    - ln96: "# Check *fractional declines* to ensure that the max number of \n#  \
+        \ simulation years doesn't exceed \"anomalies\" input"
+    - ln101: '# Step 4: Load production/trade/stocks data (units depend on ProcessInputs.R)----'
+    - ln102: |-
+        #Export Matrix ordered by FAOSTAT country code (increasing)
+        #Production
+        #Reserves (a.k.a. Stocks)
+    - ln106: |-
+        # Step 5: Setup production and shocks; initialize output vectors ----
+        # Assign production vector to P0 ====
+    - ln110: '# Create ''Shocks'' dataframe ===='
+    - ln114: '# Order shocks dataframe by FAOSTAT country code (in increasing order)
+        ===='
+    - ln120: '# Initialize  output vectors ===='
+    - ln131: '## Add initial conditions to output arrays'
+    - ln137: '## Create ''InputFSC'' dataframe adding initial reserves===='
+    - ln140: '# Step 6: Time loop (annual timestep, updating InputFSC) ----'
+    - ln142: '## Update progress in time loop'
+    - ln145: |-
+        # Separate NEGATIVE and POSITIVE shock anomalies ====
+        #   Fractional gains and losses in production
+        #   Note: Initial production, P0, is fixed but Shocks vary in time
+    - ln150: '# adjust sign (fractional *declines* read in)'
+    - ln154: '# adjust sign (fractional *declines* read in)'
+    - ln156: '# Create vector for NEGATIVE shock anomalies ===='
+    - ln160: '# Set Reserves and add POSTIVE anomalies to reserves ===='
+    - ln162: '## First timestep: add Shocks into InputFSC dataframe'
+    - ln166: '# Add positive anomalies to reserves ===='
+    - ln171: '# Update reserve levels: use ending levels from previous timestep and
+        add production gains'
+    - ln176: '# Update state variables for trade_dat ===='
+    - ln178: '# Assign production, reserves, and export matrix'
+    - ln180: '# Number of countries'
+    - ln182: '# Change in reserves; set initially to zero'
+    - ln184: '# Compute consumption assuming that it is initially equal to supply'
+    - ln186: '# Assign initial consumption to variable for later use'
+    - ln189: '# Initial shortage is 0'
+    - ln193: '# Clear trade_dat dataframe'
+    - ln195: |-
+        # Assign production, reserves *from previous timestep*, and export matrix
+        #   i.e. update only reserves; leave consumption & trade at initial levels
+    - ln198: '# Number of countries'
+    - ln200: '# Change in reserves'
+    - ln202: '# Initial shortage is 0'
+    - ln204: '# Compute consumption assuming that it is initially equal to supply'
+    - ln206: '# Clear results from previous timestep'
+    - ln210: '# Call main simulation functions'
+    - ln213: '# Run Proportional Trade Allocation (PTA) Model'
+    - ln215: '# Run Reserves-based Trade Allocation (RTA) Model'
+    - ln218: |-
+        # Store outputs of interest from simulations ====
+        #   Output: 1D arrays
+    - ln224: '#     consumption relative to initial consumption'
+    - ln226: '#     change in reserves relative to initial consumption'
+    - ln229: '#   Output: 2D arrays'
+    - ln232: '# Clear unneeded variables'
+    - ln238: |-
+        # Step 8: Collect, reformat and save output data ----
+        # Production
+    - ln245: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln247: '# remove preceding X character for Year column and convert to numeric'
+    - ln250: '# Reserves'
+    - ln256: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln258: '# remove preceeding X character for Year column aand convert to numeric'
+    - ln261: '# Shortage'
+    - ln268: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln270: '# remove preceeding X character for Year column aand convert to numeric'
+    - ln274: '# Consumption to C0'
+    - ln281: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln283: '# remove preceeding X character for Year column aand convert to numeric'
+    - ln286: '# Change in Reserves to C0'
+    - ln293: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln295: '# remove preceeding X character for Year column aand convert to numeric'
+    - ln299: '# Export matrix'
+    - ln303: '# Network properties (initial and final)'
+    - ln309: '# Initial'
+    - ln326: '# Final'
+    - ln343: '# Save Bilateral Export Matrices as R data file'
+    - ln347: '## Save as CSV'
+    - ln354: '## Save network statistics'
+  - main_static.R:
+    - ln1: '## Main script for the Food Shock Cascade (FSC) Model'
+    - ln3: '# Create output directory if needed'
+    - ln8: '# Step 0: Load FSC functions ----'
+    - ln12: |-
+        # Step 1: Input Arguments ----
+        # RStudio version: Specify arguments  ====
+    - ln15: '# Set year range to run model'
+    - ln16: '# Create column names for output files'
+    - ln20: |-
+        # Step 2: Specify crop + exogenous trade restriction scenario ----
+        #i_scenario = 1 # wheat
+        #i_scenario = 2 # rice
+    - ln23: '# maize'
+    - ln25: |-
+        # Production *fractional declines* list by year by country ====
+        # Read production declines and Select countries for export bans
+        #  Index based on iso3 alphabetical ordering
+    - ln41: |-
+        # Step 3: Load ancillary data ----
+        # i) Commodity list for bilateral trade
+    - ln44: '# ii) Load country list'
+    - ln46: '# Order by iso3 code'
+    - ln47: '# iii) Production decline fractions'
+    - ln50: '# Step 4: Load production/trade/stocks data ----'
+    - ln51: |-
+        #Export Matrix ordered by FAOSTAT country code (increasing)
+        #Production
+        #Reserves (a.k.a. Stocks)
+    - ln56: |-
+        # Step 5: Setup production and shocks; initialize output vectors ----
+        # Assign production vector to P0 ====
+    - ln60: '# Create ''Shocks'' dataframe ===='
+    - ln64: '# Order shocks dataframe by FAOSTAT country code (in increasing order)
+        ===='
+    - ln70: '# Initialize  output vectors ===='
+    - ln81: '## Add initial conditions to output arrays'
+    - ln87: '## Create ''InputFSC'' dataframe adding initial reserves===='
+    - ln90: |-
+        # Step 6:
+        # Separate NEGATIVE and POSITIVE shock anomalies ====
+        #   Fractional gains and losses in production
+        #   Note: Initial production, P0, is fixed but Shocks vary in time
+    - ln96: '# adjust sign (fractional *declines* read in)'
+    - ln100: '# adjust sign (fractional *declines* read in)'
+    - ln102: '# Create vector for NEGATIVE shock anomalies ===='
+    - ln106: '# Set Reserves and add POSTIVE anomalies to reserves ===='
+    - ln110: '# Add positive anomalies to reserves ===='
+    - ln114: |-
+        # Update state variables for trade_dat ====
+        # Assign production, reserves, and export matrix
+    - ln117: '# Number of countries'
+    - ln119: '# Change in reserves; set initially to zero'
+    - ln121: '# Compute consumption assuming that it is initially equal to supply'
+    - ln125: '# Initial shortage is 0'
+    - ln128: '# Domestic Supply after production declines'
+    - ln134: '# Impose export restrictions for COVID-19 scenario'
+    - ln136: '# Wheat'
+    - ln141: '#   Add *restricted* exports to reserves'
+    - ln146: '#  Impose export restrictions by setting export values to zero'
+    - ln152: '# Rice'
+    - ln153: '# country_list[76,] India'
+    - ln154: '# country_list[167,] Thailand'
+    - ln155: '# country_list[184,]  Vietnam'
+    - ln157: '#   Add *restricted* exports to reserves'
+    - ln162: '#  Impose export restrictions by setting export values to zero'
+    - ln168: '# Maize'
+    - ln169: '# country_list[6,] Argentina'
+    - ln170: '# country_list[17,] Brazil'
+    - ln171: '# country_list[178,]  Ukraine'
+    - ln173: '#   Add *restricted* exports to reserves'
+    - ln178: '#  Impose export restrictions by setting export values to zero'
+    - ln184: '#  Update state variables for trade_dat after trade restrictions'
+    - ln188: '# Domestic Supply after production declines and trade restrictions'
+    - ln194: '#Update results'
+    - ln197: |-
+        # Store outputs of interest from simulations ====
+        #   Output: 1D arrays
+    - ln204: '# Consumption relative to initial consumption'
+    - ln207: |-
+        #     change in reserves relative to initial consumption
+        #dR_C0out[, i] <- results_FSC$dR / C0_initial
+    - ln210: |-
+        # Step 7: Collect, reformat and save output data ----
+        # Production
+    - ln217: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln219: '# remove preceeding X character for Year column aand convert to numeric'
+    - ln222: '# Reserves'
+    - ln228: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln230: '# remove preceeding X character for Year column aand convert to numeric'
+    - ln233: '# Trade matrix (2D array)'
+    - ln238: '# Shortage'
+    - ln245: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln247: '# remove preceeding X character for Year column aand convert to numeric'
+    - ln251: '# Consumption to C0'
+    - ln258: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln260: '# remove preceeding X character for Year column aand convert to numeric'
+    - ln269: '# combine the year columns into a single column with separate rows for
+        each year; assign to new vector'
+    - ln271: '# remove preceeding X character for Year column and convert to numeric'
+    - ln274: '## Save as CSV'
+    - ln282: '## Save lists of initial and final imports and outputs by country'
+    - ln288: '# Save Exports as R data file'
+  - ProcessInputs.R:
+    - ln1: |-
+        ## Process *structured* input datasets for Food Shock Cascade (FSC) Model-------------------
+        ## Creates trade, production, and reserves matrices for use in cascade model
+    - ln4: "## Requires existing files in working directory: \n## Commodity List (with\
+        \ kcal conversions), \n## Production data from FAOSTAT, production quantity\
+        \ in tonnes \n## Trade data from FAOSTAT, detailed trail matrix, normalized,\
+        \ all data \n## Reserves data from USDA, downloadable dataset - psd grains\
+        \ pulses"
+    - ln18: '# Set year range for production, trade, and reserves data ---------------------------------'
+    - ln21: |-
+        # Load ancillary data  ---------------------------------
+        # 1) Load country list valid for simulation years
+    - ln24: '# 2)  Commodity list for bilateral trade'
+    - ln26: '# 3)  Commodity list for production'
+    - ln28: '# 4)  Commodity list for reserves'
+    - ln31: '# PART 1: Trade (Detailed trade matrix pre-downloaded trade from FAOSTAT)  --------------'
+    - ln33: '# Step 1: Download detailed trade matrix from FAO  ===='
+    - ln37: '# Step 2: Filter using "dplyr" filter function: 1) by year and 2) by
+        "cropcommodity_list"  ===='
+    - ln49: '# Step 3: Remove trade between a country and itself in trade_dat dataframe  ===='
+    - ln52: '# Step 4: Extract element "export quantity" from bilateral trade data  ===='
+    - ln55: |-
+        # Step 5: Aggregate commodities after converting to kilocalories ====
+        #  caloric conversions are in dataframe "commoditites"
+    - ln58: '##caloric conversion##'
+    - ln60: '##sum commodities##'
+    - ln62: |-
+        # Step 6: Convert export dataframe to a country x country x year matrix ====
+        #         Countries are ordered by FAOSTAT country code (increasing)
+    - ln69: '###Remove before commit (assumes fixed length 1:5)'
+    - ln71: |-
+        # Step 7: Save bilateral export matrix ordered by FAOSTAT country code ====
+        #         FAOSTAT country code are in increasing order
+    - ln75: '# Export matrices with country names'
+    - ln80: |-
+        ## PART 2 : Get production data from FAOSTAT  ----
+        ## QC: production-crops domain, 5510: production in tonnes
+    - ln83: '# Step 1: Download and import production data from FAOSTAT ===='
+    - ln86: '# Step 2: Format imported data ===='
+    - ln88: '# Rename to match functions code'
+    - ln94: '# Keep only relevant columns'
+    - ln97: '# Step 3: Filter data by year and commodity ===='
+    - ln102: |-
+        # Step 4: Convert units and sum across commodities ====
+        #         Add kcal conversion factor,
+        #         then sum calories by country and year across different cereals
+    - ln110: '# Step 5: Reshape data into country x year matrix ----'
+    - ln112: '#expand to include all countries'
+    - ln113: '#remove country code column'
+    - ln114: '#replace NAs with 0'
+    - ln116: '# Step 6: Average for time period and put in  dataframe ----'
+    - ln123: '# Step 7: Save files ----'
+    - ln128: '# Clear unneeded files'
+    - ln131: "# PART 3: Stocks of cereals in countries x years matrix  ----\n#   \
+        \      USDA Foreign Agricultural Service \n#         Production, Supply, and\
+        \ Distribution (PSD) data\n#         Download the file USDA-PSD data pulses\
+        \ grains"
+    - ln135: '# NOTE: length must match number of years for production'
+    - ln136: '# Step 1: Load data ----'
+    - ln139: "# Step 2: Extract year-end stocks for specified year range ---- \n#\
+        \         Units: 1000 metric tons"
+    - ln148: '# Step 3: Read table of commodities and kcal/tonnes conversion factors
+        ----'
+    - ln151: |-
+        # Step 4: Adjust names to match PSD database ----
+        #         The second name is the one used in PSD.
+        # The commodities included for 'Ending Stocks' are: Barley, Corn, Millet, Mixed Grain,
+        # Oats, "Rice, Milled", Rye, Sorghum, Wheat
+    - ln160: '# Step 5: Filter by commodities ----'
+    - ln164: '# Step 6: Calculate Reserves in kcal, reshape to Country x Year ----'
+    - ln172: '# Step 7: Multiple fixes to ensure countries match between FAOSTAT and
+        PSD data ----'
+    - ln174: '# Fix non-matching country names ===='
+    - ln204: "## Add Taiwan and HK to China, South Sudan to Sudan, and two Yemens\n\
+        #Rkbyc[\"China\", ] <- Rkbyc[\"China\", ] + Rkbyc[\"Hong Kong\", ] + Rkbyc[\"\
+        Taiwan\", ]\n#Rkbyc <- Rkbyc[!(rownames(Rkbyc) %in% c(\"Hong Kong\", \"Taiwan\"\
+        , \"South Sudan\", \n#                                        \"Yemen Ar Rp\"\
+        , \"Yemen Dem\")), ]"
+    - ln213: '## Apportion European Union reserves proportionally to production ===='
+    - ln244: '# Label rows in production matrix from from country_list ===='
+    - ln250: '# Add individual EU countries to matrix ===='
+    - ln254: '#delete EU row'
+    - ln256: '# Step 8: Create new matrix with all countries in Pkbyc (full country
+        list) ----'
+    - ln258: '# Fill reserves by matching names, leave the rest at zero ===='
+    - ln267: '# Take average years and save as R0 ===='
+    - ln276: |-
+        ### clear environment
+        #rm(list=ls())
+  - Requirements.R:
+    - ln1: |-
+        #################################
+        ### INSTALL REQUIRED PACKAGES ###
+        #################################
+    - ln21: '#tidyr,dplyr,reshape2,stringr,igraph,ggraph,tidyverse,netrankr'

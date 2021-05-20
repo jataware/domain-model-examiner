@@ -50,8 +50,8 @@ import modules.utilities as util
 
 def main():
   parser = argparse.ArgumentParser(
-  description='Domain Model Examiner (DMX) mines codebases to semi-" \
-    "automate installation and execution', epilog='Good luck.'
+  description='Domain Model Examiner (DMX) mines codebases to semi- \
+    automate installation and execution', epilog='Good luck.'
     )
   parser.add_argument('--repo', help="GitHub repo path in double quotes")
   parser.add_argument('--url',  help="GitHub repo URL in double quotes")
