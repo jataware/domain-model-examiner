@@ -1,0 +1,294 @@
+- language: Python
+- owner: Not a valid git repository.
+- about: Not a valid git repository.
+- docker_entrypoint: ENTRYPOINT ["/app/pythia.sh"]
+- model_types:
+  - Geospatial Data / Terrain Models
+- imports:
+  - argparse
+  - csv
+  - datetime
+  - datetime.datetime
+  - enum.Enum
+  - enum.unique
+  - fiona
+  - importlib.util
+  - itertools
+  - jinja2.Environment
+  - jinja2.FileSystemLoader
+  - json
+  - logging
+  - logging.NullHandler
+  - math
+  - multiprocessing
+  - multiprocessing.pool.Pool
+  - numpy
+  - numpy.ma
+  - os
+  - pandas
+  - rasterio
+  - shapely.geometry.MultiPoint
+  - shapely.geometry.Point
+  - shapely.ops.nearest_points
+  - shutil
+  - sqlite3
+  - subprocess
+  - sys
+- main_files:
+  - \pythia\__main__.py
+  - \v1\pythia.py
+  - \.\pythia\__main__.py
+  - \.\v1\pythia.py
+- data_files:
+  - overview.csv
+  - summary.csv
+- output_files:
+    \.\pythia\analytics.py:
+    - line: 125
+      path: current_file) as source
+      write: line[0:num_cols]
+    - line: 159
+      path: 'harea_tiff) as ds:'
+      write: ''
+    \.\pythia\peerless.py:
+    - line: 63
+      path: contextWorkDir template
+      write: pythia.template.render_template(env, context["template"], context)
+    - line: 94
+      path: workDir run_list.txt
+      write: f"{x}\n"
+    \.\pythia\plugins\weather_forecast_simple\__init__.py:
+    - line: 55
+      path: ''
+      write: '"{}{}\n".format'
+    \pythia\analytics.py:
+    - line: 125
+      path: current_file) as source
+      write: line[0:num_cols]
+    - line: 159
+      path: 'harea_tiff) as ds:'
+      write: ''
+    \pythia\peerless.py:
+    - line: 63
+      path: contextWorkDir template
+      write: pythia.template.render_template(env, context["template"], context)
+    - line: 94
+      path: workDir run_list.txt
+      write: f"{x}\n"
+    \pythia\plugins\weather_forecast_simple\__init__.py:
+    - line: 55
+      path: ''
+      write: '"{}{}\n".format'
+- urls:
+    sphinx-doc.org:
+    - https://www.sphinx-doc.org/en/master/usage/configuration.html
+- readmes: []
+- comments:
+  - conf.py:
+    - ln1: |-
+        # Configuration file for the Sphinx documentation builder.
+        #
+        # This file only contains a selection of the most common options. For a full
+        # list see the documentation:
+        # https://www.sphinx-doc.org/en/master/usage/configuration.html
+    - ln7: '# -- Path setup --------------------------------------------------------------'
+    - ln9: |-
+        # If extensions (or modules to document with autodoc) are in another directory,
+        # add these directories to sys.path here. If the directory is relative to the
+        # documentation root, use os.path.abspath to make it absolute, like shown here.
+        #
+        # import os
+        # import sys
+        # sys.path.insert(0, os.path.abspath('.'))
+    - ln18: '# -- Project information -----------------------------------------------------'
+    - ln24: '# The full version, including alpha/beta/rc tags'
+    - ln28: '# -- General configuration ---------------------------------------------------'
+    - ln30: |-
+        # Add any Sphinx extension module names here, as strings. They can be
+        # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+        # ones.
+    - ln36: '# Add any paths that contain templates here, relative to this directory.'
+    - ln39: |-
+        # List of patterns, relative to source directory, that match files and
+        # directories to ignore when looking for source files.
+        # This pattern also affects html_static_path and html_extra_path.
+    - ln45: '# -- Options for HTML output -------------------------------------------------'
+    - ln47: |-
+        # The theme to use for HTML and HTML Help pages.  See the documentation for
+        # a list of builtin themes.
+        #
+    - ln52: |-
+        # Add any paths that contain custom static files (such as style sheets) here,
+        # relative to this directory. They are copied after the builtin static files,
+        # so a file named "default.css" will overwrite the builtin "default.css".
+    - ln57: '# -- RTD Settings -------------------------------------------------------------'
+    - ln59: |-
+        # It seems that RTD needs to have this set in order for the build to occur.
+        #
+  - analytics.py:
+    - ln27: |-
+        # Always by default keep the per_pixel_per_management file, but create a place
+        # for the single output or analytics, should we have a "final outputs"
+        # directory.
+    - ln156: '# TODO Fix later, this is hacky with little checks in place'
+    - ln198: '# Apply all the filters first'
+  - analytic_functions.py: []
+  - cache_manager.py: []
+  - cli.py: []
+  - config.py:
+    - ln45: '# Raster check pass 1 - all files are available and of the same projections'
+    - ln56: '# Vector check pass 1 - all files are available and of the same projections'
+  - dssat.py:
+    - ln13: '# print(".", end="", flush=True)'
+    - ln18: '# print("+", end="", flush=True)'
+    - ln50: '# _generate_run_list(config):'
+  - functions.py:
+    - ln113: '# splits = int(args[1])'
+  - io.py: []
+  - peerless.py:
+    - ln85: '# Post context hook'
+  - plugin.py:
+    - ln21: '# Check to see if the hook is a PluginHook'
+    - ln26: '# Check to see if the function is a function.'
+    - ln31: '# Check to see if the config is an object.'
+    - ln38: '# Check to see if the plugin is being multicalled in that hook'
+    - ln51: '# Check to see if this function is already in there.'
+    - ln59: '# Check the configuration file for plugins'
+    - ln67: '# Check to see if the plugins are in place'
+    - ln80: |-
+        # TODO: Check to see if the config works for the plugin
+        # TODO: Check to see if the plugin conforms to the correct signature (optional)
+    - ln83: '# Call plugin initialization'
+  - soil_handler.py: []
+  - template.py:
+    - ln6: '# leave alone'
+  - util.py: []
+  - __init__.py: []
+  - __main__.py: []
+  - __init__.py:
+    - ln72: '# First we organize them'
+    - ln90: '# Next we generate the new runs for each analysis'
+  - __init__.py: []
+  - __init__.py:
+    - ln6: |-
+        # Configuration
+        # "plugins":[
+        #   { "plugin": "weather_forecast_simple",
+        #     "params": {
+        #       "start_date": "2018-01-01",
+        #       "end_date": "2018-04-31",
+        #       "wsta": "SSDF"
+        #     },
+        #    "order": 1
+        #   }
+        # ]
+  - plugin_test.py: []
+  - __init__.py: []
+  - pythia.py:
+    - ln44: '#    coord_list = [tuple(map(int, d.split(''_''))) for d in directories]'
+    - ln60: '#hardcoded to Metric Tonnes'
+  - __init__.py: []
+  - conf.py:
+    - ln1: |-
+        # Configuration file for the Sphinx documentation builder.
+        #
+        # This file only contains a selection of the most common options. For a full
+        # list see the documentation:
+        # https://www.sphinx-doc.org/en/master/usage/configuration.html
+    - ln7: '# -- Path setup --------------------------------------------------------------'
+    - ln9: |-
+        # If extensions (or modules to document with autodoc) are in another directory,
+        # add these directories to sys.path here. If the directory is relative to the
+        # documentation root, use os.path.abspath to make it absolute, like shown here.
+        #
+        # import os
+        # import sys
+        # sys.path.insert(0, os.path.abspath('.'))
+    - ln18: '# -- Project information -----------------------------------------------------'
+    - ln24: '# The full version, including alpha/beta/rc tags'
+    - ln28: '# -- General configuration ---------------------------------------------------'
+    - ln30: |-
+        # Add any Sphinx extension module names here, as strings. They can be
+        # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+        # ones.
+    - ln36: '# Add any paths that contain templates here, relative to this directory.'
+    - ln39: |-
+        # List of patterns, relative to source directory, that match files and
+        # directories to ignore when looking for source files.
+        # This pattern also affects html_static_path and html_extra_path.
+    - ln45: '# -- Options for HTML output -------------------------------------------------'
+    - ln47: |-
+        # The theme to use for HTML and HTML Help pages.  See the documentation for
+        # a list of builtin themes.
+        #
+    - ln52: |-
+        # Add any paths that contain custom static files (such as style sheets) here,
+        # relative to this directory. They are copied after the builtin static files,
+        # so a file named "default.css" will overwrite the builtin "default.css".
+    - ln57: '# -- RTD Settings -------------------------------------------------------------'
+    - ln59: |-
+        # It seems that RTD needs to have this set in order for the build to occur.
+        #
+  - analytics.py:
+    - ln27: |-
+        # Always by default keep the per_pixel_per_management file, but create a place
+        # for the single output or analytics, should we have a "final outputs"
+        # directory.
+    - ln156: '# TODO Fix later, this is hacky with little checks in place'
+    - ln198: '# Apply all the filters first'
+  - analytic_functions.py: []
+  - cache_manager.py: []
+  - cli.py: []
+  - config.py:
+    - ln45: '# Raster check pass 1 - all files are available and of the same projections'
+    - ln56: '# Vector check pass 1 - all files are available and of the same projections'
+  - dssat.py:
+    - ln13: '# print(".", end="", flush=True)'
+    - ln18: '# print("+", end="", flush=True)'
+    - ln50: '# _generate_run_list(config):'
+  - functions.py:
+    - ln113: '# splits = int(args[1])'
+  - io.py: []
+  - peerless.py:
+    - ln85: '# Post context hook'
+  - plugin.py:
+    - ln21: '# Check to see if the hook is a PluginHook'
+    - ln26: '# Check to see if the function is a function.'
+    - ln31: '# Check to see if the config is an object.'
+    - ln38: '# Check to see if the plugin is being multicalled in that hook'
+    - ln51: '# Check to see if this function is already in there.'
+    - ln59: '# Check the configuration file for plugins'
+    - ln67: '# Check to see if the plugins are in place'
+    - ln80: |-
+        # TODO: Check to see if the config works for the plugin
+        # TODO: Check to see if the plugin conforms to the correct signature (optional)
+    - ln83: '# Call plugin initialization'
+  - soil_handler.py: []
+  - template.py:
+    - ln6: '# leave alone'
+  - util.py: []
+  - __init__.py: []
+  - __main__.py: []
+  - __init__.py:
+    - ln72: '# First we organize them'
+    - ln90: '# Next we generate the new runs for each analysis'
+  - __init__.py: []
+  - __init__.py:
+    - ln6: |-
+        # Configuration
+        # "plugins":[
+        #   { "plugin": "weather_forecast_simple",
+        #     "params": {
+        #       "start_date": "2018-01-01",
+        #       "end_date": "2018-04-31",
+        #       "wsta": "SSDF"
+        #     },
+        #    "order": 1
+        #   }
+        # ]
+  - plugin_test.py: []
+  - __init__.py: []
+  - pythia.py:
+    - ln44: '#    coord_list = [tuple(map(int, d.split(''_''))) for d in directories]'
+    - ln60: '#hardcoded to Metric Tonnes'
+  - __init__.py: []
