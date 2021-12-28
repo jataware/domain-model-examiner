@@ -1,4 +1,4 @@
-tldextract==3.1.0
-PyYAML==5.4.1
-GitPython==3.1.14
+tldextract>=3.1.0
+PyYAML>=5.4.1
+GitPython>=3.1.14
 fastapi[all]
